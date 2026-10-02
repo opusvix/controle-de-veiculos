@@ -1,0 +1,415 @@
+# Controle de Veículos — como instalar e usar
+
+![Ícone do Controle de Veículos](imagens/icone.png)
+
+Este guia é escrito para quem **não é da área de tecnologia**. É só seguir os passos,
+na ordem, e fazer o que a tela mostrar. Se algo diferente aparecer no seu computador,
+respire fundo: quase sempre é só uma pergunta diferente — as explicações de sempre
+estão nas [dúvidas mais comuns](#parte-10--dúvidas-mais-comuns).
+
+Vale para **Windows 10 e 11** (computador) e para **celular** (Android ou iPhone).
+
+> **Resumo rápido**
+>
+> 1. No computador: dois cliques em **`Instalar.bat`** e digite onde quer instalar.
+> 2. Na primeira abertura: crie **seu usuário e sua senha** e confirme a pasta onde
+>    os dados vão ficar.
+> 3. Cadastre seu carro, lance os abastecimentos e as manutenções. Travou em alguma
+>    parte? Clique em **Ajuda** — lá dentro tem este guia inteiro.
+> 4. No celular: ligue o **`Servidor Wi-Fi.bat`** no PC, digite o endereço no navegador
+>    do celular e clique em **Sincronizar com o PC** para juntar os dois aparelhos.
+>
+> Não precisa de internet nem de cadastro em site nenhum: o usuário e a senha ficam
+> guardados só no seu aparelho, e a sincronização acontece só entre os seus aparelhos,
+> na sua rede de casa.
+
+---
+
+# Parte 1 — Instalando no computador
+
+## Passo 1 — Abra o instalador
+
+1. Abra a pasta do programa (aquela que tem os arquivos `Instalar.bat`, `web`, `imagens`...).
+2. Dê **dois cliques** em **`Instalar.bat`**.
+
+Vai abrir uma janela preta perguntando onde o programa deve ficar:
+
+![Janela do instalador perguntando em qual pasta instalar](imagens/01-instalar.png)
+
+## Passo 2 — Escolha a pasta
+
+A pergunta aparece assim:
+
+```
+Pasta de instalacao [C:\Programas\Controle de Veiculos]:
+```
+
+- O que está entre colchetes é a **sugestão**. Se ela te serve, é só **apertar Enter**.
+- Quer outra pasta? Digite o caminho (ex.: `C:\Programas\Veiculos`) e **aperte Enter**.
+- Não sabe o que digitar? **Enter** resolve — a sugestão já é uma boa pasta.
+
+## Passo 3 — Aguarde terminar
+
+Em poucos segundos a janela mostra **INSTALACAO CONCLUIDA** e o que foi feito.
+Se a janela fechar sozinha, tudo certo também.
+
+## Passo 4 — O atalho na Área de Trabalho
+
+O instalador cria o atalho **Controle de Veículos** na Área de Trabalho, com o mesmo
+ícone do começo deste guia. A partir de agora é **só dar dois cliques nele** para abrir
+o programa.
+
+## Passo 5 — Abra e escolha onde guardar seus dados
+
+Na **primeira abertura** aparece uma caixa perguntando:
+
+![Caixa do Windows perguntando onde guardar os dados](imagens/02-pasta-dados.png)
+
+1. A pasta sugerida já aparece no campo de caminho (no exemplo,
+   `C:\Programas\Controle de Veiculos\ControleVeiculos`).
+2. **Confirme** (clique em **Selecionar pasta** ou **OK**).
+3. Pronto: seus dados passam a ficar ali e o programa **não pergunta de novo**.
+
+> Quer guardar em outro lugar? É só navegar até a pasta desejada antes de confirmar.
+
+> **Já usava o programa antigo (pasta `ControleKm`)?** Não faça nada. Na primeira
+> abertura o programa **copia** seus dados para a pasta nova sozinho, e as pastas
+> antigas continuam lá intactas — viram sua cópia de segurança.
+
+## Passo 6 — Crie o seu usuário e a senha
+
+![Tela de acesso com usuário, senha e os três botões de forma de trabalho](imagens/09-tela-acesso.png)
+
+Logo em seguida aparece a **tela de acesso**:
+
+1. **Usuário** — escreva o nome que quiser (é só para você se lembrar).
+2. **Senha** — pelo menos **4 caracteres**.
+3. **Repita a senha** — digite a mesma senha de novo.
+4. Clique em **Criar conta e entrar**.
+
+Nas próximas aberturas bastam o **Usuário** e a **Senha**, e depois você escolhe a
+forma de trabalho:
+
+| Botão | O que ele faz |
+|---|---|
+| **Aplicativo** | Abre a janela do programa (o que você vai usar quase sempre). |
+| **Computador** | Abre esta mesma ferramenta no navegador deste computador. |
+| **Smartphone** | Liga o endereço para o celular acessar (abre o `Servidor Wi-Fi.bat`). |
+
+> - Essa senha é uma **tranca local**: fica guardada só neste computador, no arquivo
+>   `conta.json` dentro da pasta `ControleVeiculos` — nada é enviado para a internet.
+>   É diferente de senha de e-mail ou de banco.
+> - **Esqueceu a senha?** Clique em **Esqueci a senha** e crie outra. Ele reinicia só
+>   a tranca: **os seus dados continuam intactos**.
+> - O celular/navegador tem a **sua própria tranca** — na primeira vez que você abrir
+>   a página por lá, crie um usuário e uma senha naquele aparelho.
+
+## Passo 7 — Se o Windows avisar que o programa é "desconhecido"
+
+Isso acontece porque o programa não foi comprado numa loja. **Não é vírus.**
+
+1. Clique em **Mais informações**.
+2. Clique em **Executar assim mesmo**.
+
+---
+
+# Parte 2 — Conhecendo a tela
+
+![Tela inicial do programa](imagens/03-tela-inicial.png)
+
+A tela tem cinco partes:
+
+1. **Barra de cima** — mostra qual veículo está sendo usado agora e tem os botões
+   **+ Novo veículo**, **Registrar manutenção** e **Registrar abastecimento**
+   (esses dois abrem a aba certa já preenchida).
+2. **As quatro abas** logo abaixo: **Abastecimentos**, **Manutenções**,
+   **Relatórios** e **Veículos**. Clique em cada uma para trocar de tela.
+3. **O formulário** — é onde você digita o que aconteceu (um abastecimento, um serviço...).
+4. **A lista embaixo** — tudo o que você já lançou, do mais recente para o mais antigo.
+5. **Linha de status, no rodapé** — mostra que tudo foi salvo e em qual pasta está o arquivo.
+
+> **Nada se perde:** o programa salva sozinho a cada alteração. Se quiser salvar na mão,
+> aperte **Ctrl+S**.
+
+> **Precisou de ajuda no meio do caminho?** Clique no botão **Ajuda** da barra de
+> ferramentas (ou no menu **Ajuda → Manual completo**) que este guia abre em texto,
+> aqui mesmo no seu computador. Na versão de celular/navegador, o botão é o **?**
+> lá em cima — e na aba **Dados** também tem **Abrir o manual (texto)**.
+
+---
+
+# Parte 3 — Cadastrar seu carro ou moto
+
+![Aba Veículos com o formulário de cadastro](imagens/04-cadastrar-veiculo.png)
+
+1. Clique na aba **Veículos**.
+2. Preencha **Nome / apelido** (obrigatório) — ex.: `Gol 2019`.
+3. Se quiser, complete **Placa**, **Ano**, **Km inicial** e **Combustível**.
+   O que não souber, deixe em branco: dá para completar depois.
+4. Clique em **Adicionar veículo**.
+5. Com o veículo na lista, clique em **Usar este veículo** — ele passa a ser o que
+   aparece na barra de cima e o que recebe os seus lançamentos.
+
+> É possível ter vários veículos (o carro da casa, a moto, o da empresa). Troque de um
+> para o outro no quadradinho **Veículo:** lá em cima.
+
+---
+
+# Parte 4 — Registrar um abastecimento
+
+Use a aba **Abastecimentos** (a primeira, que já abre sozinha).
+
+1. **Data** — dia da parada no posto.
+2. **Odômetro (km)** — os quilômetros que o carro marcava nessa hora (olhe no painel).
+3. **Litros** — quanto entrou de combustível.
+4. **Preço/L (R$)** — quanto custou cada litro.
+5. **Total (R$)** — o programa calcula sozinho; só digite se preferir.
+6. **Posto** — opcional, serve para lembrar onde costuma sair mais barato.
+7. Marque **Tanque cheio** sempre que encher o tanque.
+8. Clique em **Adicionar**.
+
+Abaixo, o **Histórico** mostra cada parada com o que interessa de verdade:
+
+- **Dist. (km)** — quantos km você rodou desde a parada anterior;
+- **km/L** — quanto o carro rendeu nesse trecho;
+- **R$/km** — quanto custou cada quilômetro rodado.
+
+> O **~** na frente do número quer dizer "aproximado", e acontece quando você não marcou
+> **Tanque cheio**. Marque sempre que encher: aí o número sai exato.
+
+---
+
+# Parte 5 — Manutenções (óleo, pneus, freios, revisão...)
+
+![Aba Manutenções com os avisos de serviço](imagens/05-manutencoes.png)
+
+1. Clique na aba **Manutenções**.
+2. Preencha **Data**, **Odômetro** e **Tipo de serviço** (escolha na lista —
+   *Troca de óleo*, *Pneus*, *Revisão*... — ou escreva outro).
+3. Complete, se quiser: **Custo (R$)**, **Oficina / local**, **Serviços executados**
+   e **Observações**.
+4. Para receber o aviso da próxima revisão, informe **Repetir a cada X km**,
+   **Próxima em data**, ou os dois.
+5. Clique em **Adicionar**.
+
+**Como os avisos funcionam:**
+
+| Selo | Significado |
+|---|---|
+| 🔴 **Atrasada** | Passou da data ou da quilometragem marcada. |
+| 🟡 **Próxima** | Falta pouco: até 500 km (ou 10% do intervalo) ou até 30 dias. |
+| ⚪ **Em dia** | Tem tempo ainda. |
+
+Os avisos aparecem na própria lista, no rodapé da aba e, na versão de celular,
+num selo com número no botão **Manutenções**.
+
+> Só o serviço **mais recente de cada tipo** gera aviso: lançou uma troca de óleo nova,
+> o lembrete da anterior fecha sozinho.
+
+---
+
+# Parte 6 — Relatórios (quanto o carro está custando)
+
+![Aba Relatórios com os cartões de resumo e o gráfico](imagens/06-relatorios.png)
+
+1. Clique na aba **Relatórios**.
+2. Se quiser um período, preencha **de** e **até** e clique em **Aplicar**
+   (**Limpar** volta para tudo).
+3. Marque **Todos os veículos** para somar tudo o que você tem cadastrado.
+
+Você verá os cartões de resumo:
+
+- **Abastecimentos**, **Manutenções**, **Km rodados**, **Litros abastecidos**;
+- **Gasto com combustível**, **Gasto com manutenção** e o **Total geral**;
+- **Preço médio do litro**, **Consumo médio**;
+- **Custo por km** — o número que mais importa para decidir se vale usar o carro.
+
+Embaixo, o **Gráfico** compara as paradas. Use o quadradinho **Indicador** para ver
+outra medida (consumo, gasto, litros...).
+
+---
+
+# Parte 7 — Usando no celular (Android e iPhone)
+
+Não existe aplicativo para instalar: a versão de celular é o arquivo
+`web\controle-veiculos.html`. Ele fica com a barra de botões embaixo e guarda os dados
+**no próprio celular**.
+
+![Janela preta do servidor mostrando o endereço para digitar no celular](imagens/07-servidor-wifi.png)
+
+**Passo 1 — No computador:** dê dois cliques em **`web\Servidor Wi-Fi.bat`**.
+Abre a janela preta acima, com um endereço tipo
+`http://192.168.18.236:8000/controle-veiculos.html`. **Anotaque.**
+
+**Passo 2 —** Confirme que o **PC e o celular estão na mesma rede Wi-Fi**
+(a mesma internet de casa, por exemplo).
+
+**Passo 3 — No celular:** abra o navegador (Chrome, Safari ou Edge) e digite aquele
+endereço, com os números que apareceram no seu computador.
+
+![A versão do programa aberta num celular](imagens/08-celular.png)
+
+**Passo 4 — Crie a tranca do celular.** Na primeira vez, a página pede **Usuário** e
+**Senha**: crie um usuário só para o celular (o computador tem o dele — são trancas
+independentes, uma por aparelho). Marque a opção para lembrar se quiser.
+
+**Passo 5 —** Para virar ícone: no Android, toque em **⋮ → Adicionar à tela de início**;
+no iPhone, **Compartilhar → Adicionar à Tela de Início**.
+
+**Passo 6 — Junte os dados do PC e do celular.** Clique na aba **Dados** e depois em
+**Sincronizar com o PC**. Em um clique, o que você lançou de um lado passa para o
+outro (os dois aparelhos ficam com a mesma informação). Detalhes na
+[Parte 9](#parte-9--levar-os-dados-de-um-lugar-para-o-outro).
+
+**Passo 7 —** Use à vontade. Enquanto você usa, a janela preta do PC precisa ficar
+aberta — é ela que está "servindo" a página. Para encerrar, feche a janela.
+
+> - Os dados ficam gravados **no celular**, mesmo depois de fechar tudo — a sincronizar
+>   só **junta** o que existe dos dois lados, não substitui.
+> - Para levar dados sem sincronizar (por arquivo), veja a
+>   [Parte 9](#parte-9--levar-os-dados-de-um-lugar-para-o-outro).
+> - Seu PC não tem o Python instalado? Tudo bem: o `Servidor Wi-Fi.bat` usa o que já
+>   vem com o Windows. **Não instale nada.** (Sem Python, funciona tudo, menos o
+>   botão **Sincronizar** — nesse caso use Baixar/Importar, da Parte 9.)
+
+---
+
+# Parte 8 — Onde ficam os seus dados (e o backup)
+
+O programa guarda tudo em **um arquivo só**, dentro da pasta que você escolheu no
+Passo 5 da Parte 1. O nome dele é **`dados.json`**.
+
+- Caminho usado por padrão: `C:\Programas\Controle de Veiculos\ControleVeiculos\dados.json`
+- Se o seu computador **não tem** essa pasta/unidade, o programa usa sozinho
+  `Documentos\ControleVeiculos\dados.json` — nada quebra.
+- É um arquivo de texto: pode ser copiado, mandado por WhatsApp ou guardado num pendrive.
+
+**Fazer backup é fácil:** copie o arquivo `dados.json` (ou a pasta `ControleVeiculos`
+inteira) para um pendrive, um HD externo ou sua nuvem. Faça isso de vez em quando.
+
+**Se apagou tudo sem querer:** se você tinha o backup, é só colocar o `dados.json`
+de volta no lugar. No programa também existe **Arquivo → Abrir...** para carregar
+outra cópia.
+
+**No celular:** use a aba **Dados → Baixar dados.json** para gerar uma cópia.
+
+---
+
+# Parte 9 — Levar os dados de um lugar para o outro
+
+## O jeito fácil: o botão **Sincronizar com o PC**
+
+Quando a página é aberta pelo **`Servidor Wi-Fi.bat`** (endereço começando com
+`http://...`), a aba **Dados** mostra o botão **Sincronizar com o PC**. Um clique só
+ele faz a junção automática:
+
+- leva para o PC o que foi lançado **no celular**;
+- traz para o celular o que foi lançado **no PC**;
+- respeita o que você **apagou** (se apagou nos dois lados, some dos dois);
+- se os dois lados mudaram **o mesmo lançamento**, fica com o **mais recente** (no
+  empate, vale o do PC);
+- nada é apagado sem você ter apagado antes — quem nunca sincronizou não perde nada.
+
+**Quando funciona:** computador **ligado**, `Servidor Wi-Fi.bat` **aberto** e PC +
+celular na **mesma rede Wi-Fi**. É tudo dentro da sua casa: os dados não passam pela
+internet nem por servidor nenhum de terceiros.
+
+**Não apareceu o botão?** A página avisa o motivo. Os motivos comuns:
+
+- você abriu o arquivo com duplo clique (endereço `file://`) — é só abrir pelo
+  `Servidor Wi-Fi.bat`;
+- o PC está dormindo ou a janela preta foi fechada — ligue de novo;
+- o computador não tem Python — nesse caso use o jeito manual abaixo.
+
+## O jeito manual: trocar o arquivo
+
+Tudo acontece na aba **Dados** (celular/navegador):
+
+| De onde → Para onde | O que fazer |
+|---|---|
+| **PC → celular** | No PC, abra o mesmo endereço no navegador e clique em **Baixar dados.json**. Envie o arquivo (WhatsApp, e-mail, Drive) e no celular toque em **Importar dados.json**. |
+| **Celular → PC** | No celular, **Baixar dados.json**; no PC, abra a versão web e use **Dados → Importar dados.json**. |
+| **Planilha (Excel / Google Planilhas)** | **Dados → Importar planilha/CSV** — aceita `.xlsx` e `.csv`. Clique em **Baixar modelo .csv** para ver como montar. |
+| **Começar do zero** | **Novo arquivo (apagar tudo)**. |
+
+No programa de computador, a mesma importação fica em **Arquivo → Importar planilha/CSV...**
+(Ctrl+I), e o formato das colunas está em **Ajuda → Formato das colunas (importação)**.
+
+---
+
+# Parte 10 — Dúvidas mais comuns
+
+**Preciso de internet?**
+Não. Tudo funciona sem internet; seus dados nunca saem do computador nem do celular.
+A sincronização usa a sua rede Wi-Fi de casa, só entre os seus aparelhos.
+
+**Para que serve o usuário e a senha, se não tem internet?**
+É uma tranca para **ninguém abrir o programa no seu lugar**. Fica guardada só no seu
+aparelho (`conta.json` no computador, navegador no celular), sem conta de e-mail,
+sem servidor e sem envio de nada.
+
+**Esqueci a senha. E agora?**
+Clique em **Esqueci a senha** (no computador) ou **Esqueci a senha** (na página) e
+crie outra. Só a tranca é reiniciada: **os seus dados continuam todos lá**.
+
+**Posso usar o mesmo usuário no celular e no computador?**
+Pode escrever o mesmo nome, mas **cada aparelho guarda a sua própria senha** — são
+trancas separadas. Se quiser a mesma senha nos dois, é só digitar a mesma.
+
+**O botão Sincronizar com o PC não apareceu.**
+A aba **Dados** mostra um aviso dizendo o porquê. Confira: a página aberta pelo
+`Servidor Wi-Fi.bat` (endereço `http://...`, não `file://`), o PC ligado, a janela
+preta aberta e os dois na mesma rede Wi-Fi.
+
+**Sincronizei e o celular continuou com os dados antigos.**
+A sincronização **junta** os dois lados, não apaga. Se algo não veio, clique em
+**Sincronizar com o PC** de novo e leia o aviso que aparece (ele conta quantos
+lançamentos vieram e quantos conflitos teve).
+
+**O Windows mostrou "Windows protegeu o PC". É vírus?**
+Não. É o aviso padrão para programas que não vêm de uma loja. Clique em
+**Mais informações → Executar assim mesmo**.
+
+**A pasta sugerida na primeira abertura me parece estranha. Posso mudar?**
+Pode, e depois também: **Arquivo → Salvar como...** move seus dados para onde você quiser.
+
+**Atalho sumiu da Área de Trabalho?**
+Dê dois cliques em `Instalar.bat` de novo — ele recria o atalho sem apagar nada.
+
+**Joguei o programa num pendrive. Funciona em outro PC?**
+Funciona. Na primeira abertura ele pergunta onde gravar os dados. Leve o `dados.json`
+junto se quiser manter o histórico.
+
+**Meus dados "sumiram" depois de atualizar o programa?**
+Não somem. O programa **copia** os dados para a pasta nova automaticamente e deixa as
+pastas antigas no lugar.
+
+**Uso no carro da casa e no meu. Dá?**
+Dá: cadastre os dois na aba **Veículos** e troque de um para o outro no quadradinho
+**Veículo:** lá em cima.
+
+**No iPhone dá para conectar direto no arquivo do PC?**
+Não — o iPhone não deixa. Use **Baixar dados.json** / **Importar dados.json**
+(funciona também no Android).
+
+**A janela preta fechou e o celular parou de abrir?**
+É esperado: o endereço só existe enquanto a janela está aberta. Abra o
+`Servidor Wi-Fi.bat` de novo.
+
+---
+
+# Resumo dos arquivos
+
+| Arquivo | Serve para quê |
+|---|---|
+| `Instalar.bat` | Instalação: pergunta a pasta, copia o programa e cria o atalho |
+| `Controle de Veículos.exe` | O programa do computador (também está na pasta `dist` antes da instalação) |
+| `web\controle-veiculos.html` | A mesma ferramenta no celular/navegador |
+| `web\Servidor Wi-Fi.bat` | Liga o endereço para o celular acessar (e o botão **Sincronizar**) |
+| `web\servidor.py` | O servidorzinho que atende a página e a sincronização (Python) |
+| `imagens\` | As fotos deste guia |
+| `INSTALAR-COMO-USAR.md` | Este guia |
+| `INSTALAR-COMO-USAR.txt` / `README.txt` | Os mesmos guias em texto puro — abrem com o Bloco de Notas e são os que o botão **Ajuda** abre |
+| `README.md` | Visão geral + a parte técnica para quem mexe com programação |
+| `dados.json` (na pasta escolhida) | **Seus dados** — backup = copiar esse arquivo |
+| `conta.json` (em `%APPDATA%\ControleVeiculos`) | **A sua tranca local** — apagar reinicia só a senha, nunca os dados |

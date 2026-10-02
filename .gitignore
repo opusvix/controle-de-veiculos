@@ -1,0 +1,24 @@
+# --------------------------------------------------------------- Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# ------------------------------------------------------ compilados (PyInstaller)
+build/
+dist/
+
+# --------------------------------------------------- dados pessoais (NUNCA subir)
+# a pasta de dados escolhida na 1a abertura + a pasta antiga
+ControleVeiculos/
+ControleKm/
+# cópias de segurança avulsas que você deixar na raiz
+dados.json
+*.bak
+
+# --------------------------------------------------------------- temporários
+*.log
+*.tmp
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
