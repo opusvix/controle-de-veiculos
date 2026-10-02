@@ -49,9 +49,9 @@ O programa é aberto e fica no GitHub — é só baixar o pacote:
    Controle-de-veiculos.zip — é o pacote completo, com tudo dentro.
 3. Abra a pasta Downloads, clique com o botão direito em
    Controle-de-veiculos.zip e escolha Extrair tudo.
-4. Vai surgir uma pasta Controle-de-veiculos com os arquivos lá dentro:
-   é nela que ficam o "Instalar.bat" e as pastas "web" e "imagens". Siga
-   o Passo 1 adiante.
+4. Vai surgir uma pasta com os arquivos do programa: é dentro dela que ficam
+   o "Instalar.bat" e as pastas "web" e "imagens". Entre nela e siga o
+   Passo 1 adiante.
 
     Só quer o programa, sem instalar? Na mesma página tem o
     Controle-de-Veiculos.exe — dois cliques e abre (é o programa avulso;
