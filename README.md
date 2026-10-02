@@ -374,3 +374,19 @@ As imagens que ele não faz são `08-celular.png` (tirada do navegador) e
 `09-tela-acesso.png` (tela de acesso). **Pillow** é usado **só** aqui — o programa
 em si continua sem nenhuma biblioteca externa. Depois de regenerar, confira se
 todos os arquivos referenciados em `*.md` existem.
+
+## Divulgação (posts, stories e QR code)
+
+As artes para as redes ficam em [`divulgacao/`](divulgacao/): o QR do link de
+download, a imagem de feed, o story e a capa de Reels — todas apontando para a
+release mais nova. As legendas prontas (LinkedIn, Facebook, Instagram, WhatsApp,
+stories e roteiro de Reels) estão em
+[`divulgacao/DIVULGACAO.md`](divulgacao/DIVULGACAO.md).
+
+```powershell
+python -m pip install pillow qrcode   # uma vez só
+python tools\divulgacao.py
+```
+
+Os requisitos extras valem só para as artes — o programa em si continua sem
+nenhuma biblioteca fora da biblioteca padrão.
