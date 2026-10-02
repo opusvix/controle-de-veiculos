@@ -11,7 +11,8 @@ Vale para **Windows 10 e 11** (computador) e para **celular** (Android ou iPhone
 
 > **Resumo rápido**
 >
-> 1. No computador: dois cliques em **`Instalar.bat`** e digite onde quer instalar.
+> 1. No computador: **baixe o zip** (Passo 0), extraia e dê dois cliques em
+>    **`Instalar.bat`** — ele pergunta onde instalar.
 > 2. Na primeira abertura: crie **seu usuário e sua senha** e confirme a pasta onde
 >    os dados vão ficar.
 > 3. Cadastre seu carro, lance os abastecimentos e as manutenções. Travou em alguma
@@ -26,6 +27,26 @@ Vale para **Windows 10 e 11** (computador) e para **celular** (Android ou iPhone
 ---
 
 # Parte 1 — Instalando no computador
+
+## Passo 0 — Baixe o programa (primeira vez)
+
+O programa é aberto e fica no GitHub — é só baixar o pacote:
+
+1. Abra a página de downloads: <https://github.com/opusvix/controle-de-veiculos/releases/latest>
+2. Procure a área **Assets** (no fim da página) e baixe o arquivo
+   **Controle-de-veiculos.zip** — é o pacote completo, com tudo dentro.
+3. Abra a pasta **Downloads**, clique com o botão direito em
+   **Controle-de-veiculos.zip** e escolha **Extrair tudo**.
+4. Vai surgir uma pasta **Controle-de-veiculos** com os arquivos lá dentro:
+   é nela que ficam o **`Instalar.bat`** e as pastas `web` e `imagens`. Siga
+   o Passo 1 adiante.
+
+> **Só quer o programa, sem instalar?** Na mesma página tem o
+> **Controle-de-Veiculos.exe** — dois cliques e abre (é o programa avulso;
+> ele não traz a pasta `web\` da versão de celular).
+
+> Se o Windows avisar que o programa é "desconhecido", é o aviso de sempre
+> sobre arquivos baixados da internet: siga o **Passo 7** mais abaixo.
 
 ## Passo 1 — Abra o instalador
 
@@ -342,6 +363,11 @@ No programa de computador, a mesma importação fica em **Arquivo → Importar p
 **Preciso de internet?**
 Não. Tudo funciona sem internet; seus dados nunca saem do computador nem do celular.
 A sincronização usa a sua rede Wi-Fi de casa, só entre os seus aparelhos.
+
+**De onde baixo o programa (e a versão nova)?**
+Da página de downloads do GitHub: <https://github.com/opusvix/controle-de-veiculos/releases/latest>.
+Baixe o `Controle-de-veiculos.zip`, extraia tudo e rode o **`Instalar.bat`** — os
+seus dados não são apagados. O mesmo lugar serve para pegar atualizações.
 
 **Para que serve o usuário e a senha, se não tem internet?**
 É uma tranca para **ninguém abrir o programa no seu lugar**. Fica guardada só no seu

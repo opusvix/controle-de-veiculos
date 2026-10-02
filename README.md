@@ -17,6 +17,18 @@ internet nem por serviço de terceiros.
 > (e a parte técnica, no final). Em qualquer tela há um botão de **Ajuda**
 > que abre esses mesmos guias em `.txt`.
 
+## Baixar pronto (sem compilar)
+
+- **Pacote completo:** baixe o **`Controle-de-veiculos.zip`** na página de
+  [Releases](https://github.com/opusvix/controle-de-veiculos/releases/latest),
+  extraia tudo e dê dois cliques em **`Instalar.bat`** — o passo a passo
+  com fotos está no [`INSTALAR-COMO-USAR.md`](INSTALAR-COMO-USAR.md).
+- **Só o programa:** o arquivo `Controle-de-Veiculos.exe` na mesma página
+  (portátil, Windows 10/11, sem instalar nada).
+
+Os arquivos ficam em [Releases](https://github.com/opusvix/controle-de-veiculos/releases);
+a página "latest" sempre aponta para a versão mais nova.
+
 ## Como abrir
 
 - **Pelo instalador (recomendado):** dois cliques em **`Instalar.bat`** — ele pergunta
