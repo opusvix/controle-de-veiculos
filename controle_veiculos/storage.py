@@ -17,7 +17,8 @@ def _raiz_programa() -> Path:
 
     No exe (PyInstaller) a pasta é a do próprio executável, exceto quando ele
     está em dist/ ou build/ (compilação de teste): aí sobe um nível. Raiz que
-    não existe => o app cai no Documentos, nada quebra.
+    não existe ou que não aceita gravação (Program Files) => o app cai no
+    Documentos, nada quebra.
     """
     if getattr(sys, "frozen", False):
         pasta = Path(sys.executable).resolve().parent
@@ -41,10 +42,30 @@ def documents_dir() -> Path:
     return docs if docs.exists() else profile
 
 
-def preferred_data_dir() -> Path | None:
-    """Pasta de dados dentro da raiz escolhida (None se ela não existir)."""
+def _pasta_gravavel(pasta: Path) -> bool:
+    """True se dá para criar `pasta` e gravar nela (testa de verdade).
+
+    No Windows `os.access(..., W_OK)` não serve: ele ignora as permissões
+    (ACL) e só olha o atributo de somente-leitura, então o Program Files
+    apareceria como gravável. O teste real é criar a pasta, escrever um
+    arquivo de teste e apagá-lo.
+    """
     try:
-        if PREFERRED_ROOT.exists():
+        pasta.mkdir(parents=True, exist_ok=True)
+        teste = pasta / ".permissao-teste.tmp"
+        try:
+            teste.write_text("x", encoding="ascii")
+        finally:
+            teste.unlink(missing_ok=True)
+        return True
+    except OSError:
+        return False
+
+
+def preferred_data_dir() -> Path | None:
+    """Pasta de dados dentro da raiz escolhida (None se não der para gravar)."""
+    try:
+        if PREFERRED_ROOT.exists() and _pasta_gravavel(PREFERRED_ROOT):
             return PREFERRED_ROOT / APP_DIR_NAME
     except OSError:
         pass

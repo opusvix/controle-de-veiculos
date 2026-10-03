@@ -12,7 +12,7 @@ Vale para **Windows 10 e 11** (computador) e para **celular** (Android ou iPhone
 > **Resumo rápido**
 >
 > 1. No computador: **baixe o zip** (Passo 0), extraia e dê dois cliques em
->    **`Instalar.bat`** — ele pergunta onde instalar.
+>    **`Instalar.bat`** — dê **Enter** na pasta sugerida e clique em **Sim** ao Windows.
 > 2. Na primeira abertura: crie **seu usuário e sua senha** e confirme a pasta onde
 >    os dados vão ficar.
 > 3. Cadastre seu carro, lance os abastecimentos e as manutenções. Travou em alguma
@@ -53,21 +53,28 @@ O programa é aberto e fica no GitHub — é só baixar o pacote:
 1. Abra a pasta do programa (aquela que tem os arquivos `Instalar.bat`, `web`, `imagens`...).
 2. Dê **dois cliques** em **`Instalar.bat`**.
 
-Vai abrir uma janela preta perguntando onde o programa deve ficar:
+Vai abrir uma janela preta perguntando onde o programa deve ficar — a resposta
+já vem sugerida:
 
 ![Janela do instalador perguntando em qual pasta instalar](imagens/01-instalar.png)
 
 ## Passo 2 — Escolha a pasta
 
-A pergunta aparece assim:
+A janela já vem com a **pasta padrão do Windows** preenchida:
 
 ```
-Pasta de instalacao [C:\Programas\Controle de Veiculos]:
+Pasta de instalacao [C:\Program Files\Controle de Veiculos]:
 ```
 
-- O que está entre colchetes é a **sugestão**. Se ela te serve, é só **apertar Enter**.
-- Quer outra pasta? Digite o caminho (ex.: `C:\Programas\Veiculos`) e **aperte Enter**.
-- Não sabe o que digitar? **Enter** resolve — a sugestão já é uma boa pasta.
+- **Quer instalar no lugar certo?** Nem digite nada: é só **apertar Enter**.
+- Avançado e quer outra pasta? Digite o caminho (ex.: `D:\Programas\Veiculos`)
+  e **aperte Enter**.
+- Se **já existe uma versão instalada**, o instalador mostra o endereço dela e a
+  **remove antes** de copiar a nova — a pasta com os seus dados nunca é apagada.
+- Depois do Enter o Windows pode perguntar *"Deseja permitir que este app faça
+  alterações no seu dispositivo?"* — clique em **Sim**. Esse pedido aparece
+  porque a `Program Files` é protegida pelo Windows; em outra pasta, ele não
+  aparece.
 
 ## Passo 3 — Aguarde terminar
 
@@ -92,6 +99,9 @@ Na **primeira abertura** aparece uma caixa perguntando:
 3. Pronto: seus dados passam a ficar ali e o programa **não pergunta de novo**.
 
 > Quer guardar em outro lugar? É só navegar até a pasta desejada antes de confirmar.
+
+> **Instalou no Program Files?** Aí a pasta do programa não aceita gravação e a
+> sugestão já aparece como `Documentos\ControleVeiculos` — é só confirmar.
 
 > **Já usava o programa antigo (pasta `ControleKm`)?** Não faça nada. Na primeira
 > abertura o programa **copia** seus dados para a pasta nova sozinho, e as pastas
@@ -300,9 +310,11 @@ aberta — é ela que está "servindo" a página. Para encerrar, feche a janela.
 O programa guarda tudo em **um arquivo só**, dentro da pasta que você escolheu no
 Passo 5 da Parte 1. O nome dele é **`dados.json`**.
 
-- Caminho usado por padrão: `C:\Programas\Controle de Veiculos\ControleVeiculos\dados.json`
-- Se o seu computador **não tem** essa pasta/unidade, o programa usa sozinho
-  `Documentos\ControleVeiculos\dados.json` — nada quebra.
+- Caminho usado por padrão: ao lado do programa, por exemplo
+  `C:\Programas\Controle de Veiculos\ControleVeiculos\dados.json`.
+- Se essa pasta **não existe** ou **não aceita gravação** (como o
+  `C:\Program Files`, que protege os arquivos do Windows), o programa usa
+  sozinho `Documentos\ControleVeiculos\dados.json` — nada quebra.
 - É um arquivo de texto: pode ser copiado, mandado por WhatsApp ou guardado num pendrive.
 
 **Fazer backup é fácil:** copie o arquivo `dados.json` (ou a pasta `ControleVeiculos`
@@ -366,8 +378,9 @@ A sincronização usa a sua rede Wi-Fi de casa, só entre os seus aparelhos.
 
 **De onde baixo o programa (e a versão nova)?**
 Da página de downloads do GitHub: <https://github.com/opusvix/controle-de-veiculos/releases/latest>.
-Baixe o `Controle-de-veiculos.zip`, extraia tudo e rode o **`Instalar.bat`** — os
-seus dados não são apagados. O mesmo lugar serve para pegar atualizações.
+Baixe o `Controle-de-veiculos.zip`, extraia tudo e rode o **`Instalar.bat`**: se já
+houver uma versão instalada, ele **remove a antiga antes** (os dados nunca são
+apagados). O mesmo lugar serve para pegar atualizações.
 
 **Para que serve o usuário e a senha, se não tem internet?**
 É uma tranca para **ninguém abrir o programa no seu lugar**. Fica guardada só no seu
@@ -428,7 +441,7 @@ Não — o iPhone não deixa. Use **Baixar dados.json** / **Importar dados.json*
 
 | Arquivo | Serve para quê |
 |---|---|
-| `Instalar.bat` | Instalação: pergunta a pasta, copia o programa e cria o atalho |
+| `Instalar.bat` | Instalação: sugere a pasta do Windows, remove a versão antiga e cria o atalho |
 | `Controle de Veículos.exe` | O programa do computador (também está na pasta `dist` antes da instalação) |
 | `web\controle-veiculos.html` | A mesma ferramenta no celular/navegador |
 | `web\Servidor Wi-Fi.bat` | Liga o endereço para o celular acessar (e o botão **Sincronizar**) |

@@ -49,6 +49,23 @@ def documentos() -> Path:
     return docs if docs.exists() else perfil
 
 
+def _pasta_gravavel(pasta: Path) -> bool:
+    """Igual ao storage: testa de verdade se dá para gravar (Windows/ACL)."""
+    try:
+        pasta.mkdir(parents=True, exist_ok=True)
+        teste = pasta / ".permissao-teste.tmp"
+        try:
+            teste.write_bytes(b"x")
+        finally:
+            try:
+                teste.unlink()
+            except OSError:
+                pass
+        return True
+    except OSError:
+        return False
+
+
 def arquivo_dados() -> Path:
     """Mesmo dados.json usado pelo aplicativo do computador."""
     override = os.environ.get("CONTROLE_VEICULOS_DADOS")  # teste/avançado
@@ -79,7 +96,16 @@ def arquivo_dados() -> Path:
                 return caminho
         except OSError:
             continue
-    return candidatos[0]  # ainda não criado: será gravado no padrão
+    # ainda não criado: escolhe um local onde dá para gravar (a pasta do
+    # programa pode ser o Program Files, que não aceita dados novos sem
+    # permissão de administrador - aí o padrão vira o Documentos)
+    for caminho in candidatos:
+        try:
+            if _pasta_gravavel(caminho.parent):
+                return caminho
+        except OSError:
+            continue
+    return candidatos[0]  # último caso: o padrão antigo
 
 
 # --------------------------------------------------------------- documentos

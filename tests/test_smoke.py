@@ -7,6 +7,7 @@ from __future__ import annotations
 import datetime as dt
 import json
 import os
+import subprocess
 import sys
 import tempfile
 from pathlib import Path
@@ -287,6 +288,28 @@ def test_locais():
             destino.unlink()
             check(storage.load_last_path() == meu_arquivo, "caminho escolhido respeitado")
             check(not destino.exists(), "migração automática não acontece mais")
+
+            # 6) raiz que existe mas não aceita gravação (ex.: Program Files)
+            original_gravavel = storage._pasta_gravavel
+            storage._pasta_gravavel = lambda p: False
+            try:
+                storage.PREFERRED_ROOT = raiz
+                check(storage.preferred_data_dir() is None,
+                      "raiz sem permissão de escrita é ignorada")
+                check(storage.data_dir() == docs / storage.APP_DIR_NAME,
+                      "sem gravar na raiz, o padrão cai em Documentos")
+            finally:
+                storage._pasta_gravavel = original_gravavel
+
+            # 7) o teste de gravação é de verdade (cria, grava e apaga)
+            arquivo = base / "arquivo.txt"
+            arquivo.write_text("x", encoding="utf-8")
+            nova = raiz / "nova-subpasta"
+            check(storage._pasta_gravavel(nova), "pasta gravável detectada")
+            check(not (nova / ".permissao-teste.tmp").exists(),
+                  "arquivo de teste apagado depois do teste")
+            check(not storage._pasta_gravavel(arquivo / "sub"),
+                  "arquivo no meio do caminho não vira pasta")
         finally:
             storage.PREFERRED_ROOT = raiz_original
             if user_original is None:
@@ -1212,7 +1235,7 @@ def test_servidor():
 
 
 def test_web_e_bat():
-    print("página web e Servidor Wi-Fi.bat")
+    print("página web, bats e instalador")
     raiz = Path(__file__).resolve().parents[1]
     html = (raiz / "web" / "controle-veiculos.html").read_text(encoding="utf-8")
     for marca in ('id="login-root"', 'id="login-form"', 'id="btn-sync"',
@@ -1237,6 +1260,34 @@ def test_web_e_bat():
     check("from http.server import" in codigo and "ThreadingHTTPServer" in codigo,
           "servidor.py usa só a biblioteca padrão do Python")
     check('"/__sync"' in codigo, "servidor.py expõe /__sync")
+    check("_pasta_gravavel" in codigo,
+          "servidor escolhe pasta onde dá para gravar (Program Files)")
+
+    # Instalar.bat da raiz (o instalador oficial do pacote)
+    instalar = (raiz / "Instalar.bat").read_bytes()
+    check(max(instalar) < 128, "Instalar.bat só com caracteres ASCII")
+    check(b"\r\n" in instalar and b"\n" not in instalar.replace(b"\r\n", b""),
+          "Instalar.bat com final de linha CRLF")
+    tbat = instalar.decode("ascii")
+    check("instalar.ps1" in tbat, "Instalar.bat chama o instalador do PowerShell")
+    check("title Instalar" in tbat, "Instalar.bat dá título à janela (a foto usa ele)")
+
+    # instalar.ps1: pasta padrão do Windows, atualização e sintaxe
+    ps1 = (raiz / "tools" / "instalar.ps1").read_text(encoding="utf-8-sig")
+    for marca in ("PastaBaseWindows", "ENTER ja instala na pasta padrao do Windows",
+                  "HKCU:\\Software\\Controle de Veiculos", "InstallDir",
+                  "Remover-VersaoAntiga", "RunAs",
+                  "Documentos\\ControleVeiculos"):
+        check(marca in ps1, f"instalador tem {marca}")
+    comando = ("$t = Get-Content -LiteralPath $env:INSTALAR_PS1 -Raw; "
+               "[void][scriptblock]::Create($t)")
+    proc = subprocess.run(
+        ["powershell", "-NoProfile", "-NonInteractive", "-Command", comando],
+        capture_output=True, text=True, errors="replace", timeout=90,
+        env={**os.environ, "INSTALAR_PS1": str(raiz / "tools" / "instalar.ps1")},
+    )
+    check(proc.returncode == 0,
+          f"instalar.ps1 sem erro de sintaxe ({proc.stderr.strip()[:160]})")
 
 
 def main():

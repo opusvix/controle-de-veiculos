@@ -31,16 +31,20 @@ a página "latest" sempre aponta para a versão mais nova.
 
 ## Como abrir
 
-- **Pelo instalador (recomendado):** dois cliques em **`Instalar.bat`** — ele pergunta
-  em qual pasta instalar e cria o atalho **Controle de Veículos** na Área de Trabalho.
+- **Pelo instalador (recomendado):** dois cliques em **`Instalar.bat`**, **Enter** na
+  pasta sugerida (`C:\Program Files\Controle de Veiculos`; quem sabe o que faz pode
+  digitar outra) e **Sim** no pedido do Windows — ele remove uma versão anterior,
+  se houver, e cria o atalho **Controle de Veículos** na Área de Trabalho.
 - **Direto:** dois cliques no atalho da Área de Trabalho ou em
   `dist\Controle de Veículos.exe` (arquivo único de ~12 MB, funciona em qualquer
   Windows 10/11 **sem instalar nada**; também roda de um pendrive).
 - **Pelo código-fonte:** `python main.py` ou duplo clique em `Controle de Veículos.bat`
   (precisa de Python 3).
 
-Na **primeira abertura** o programa pergunta **onde gravar os dados** (padrão:
-`C:\Programas\Controle de Veiculos\ControleVeiculos`) e em seguida abre a tela de
+Na **primeira abertura** o programa pergunta **onde gravar os dados**. Por padrão
+fica ao lado do programa (ex.: `C:\Programas\Controle de Veiculos\ControleVeiculos`);
+se a pasta do programa não aceita gravação (como o `Program Files`), a sugestão é
+`Documentos\ControleVeiculos`. Em seguida abre a tela de
 acesso: crie um **usuário** e uma **senha** (mínimo 4 caracteres) e escolha a
 forma de trabalho — **Aplicativo** (a janela), **Computador** (a versão no
 navegador) ou **Smartphone** (liga o endereço para o celular). Nas próximas
@@ -64,10 +68,11 @@ arquivo usado.
 
 ## Onde ficam os dados
 
-Padrão: `C:\Programas\Controle de Veiculos\ControleVeiculos\dados.json`. É um arquivo de
+Padrão: ao lado do programa, por exemplo
+`C:\Programas\Controle de Veiculos\ControleVeiculos\dados.json`. É um arquivo de
 texto — pode ser copiado ou levado para outro computador (backup = copiar esse arquivo
-ou a pasta inteira). Se essa pasta não existe mais, o programa cai sozinho para
-`Documentos\ControleVeiculos\dados.json`.
+ou a pasta inteira). Se essa pasta não existe ou não aceita gravação (como o
+`Program Files`), o programa cai sozinho para `Documentos\ControleVeiculos\dados.json`.
 
 - A pasta escolhida é lembrada numa minúscula configuração em
   `%APPDATA%\ControleVeiculos\config.json`; os dados em si ficam **só** na pasta
@@ -259,7 +264,7 @@ Observações:
 ```
 controle-de-veiculos/        # raiz do projeto (github.com/opusvix/controle-de-veiculos)
 ├── main.py                  # ponto de entrada
-├── Instalar.bat             # instalação: pergunta a pasta e cria o atalho
+├── Instalar.bat             # instalação: sugere a pasta do Windows e cria o atalho
 ├── Controle de Veículos.bat # lançador pelo código-fonte
 ├── README.md                # este arquivo
 ├── README.txt               # o mesmo texto gerado em .txt (Bloco de Notas)
