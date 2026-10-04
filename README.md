@@ -26,6 +26,9 @@ internet nem por serviço de terceiros.
 - **Só o programa:** o arquivo `Controle-de-Veiculos.exe` na mesma página
   (portátil, Windows 10/11, sem instalar nada).
 
+> **Não baixe os "Source code"** (`Source code (zip)` e `Source code (tar.gz)`):
+> são gerados pelo GitHub e vêm só com o código, sem o programa.
+
 Os arquivos ficam em [Releases](https://github.com/opusvix/controle-de-veiculos/releases);
 a página "latest" sempre aponta para a versão mais nova.
 

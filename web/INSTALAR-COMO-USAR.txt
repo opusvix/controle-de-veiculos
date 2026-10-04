@@ -53,6 +53,10 @@ O programa é aberto e fica no GitHub — é só baixar o pacote:
    o "Instalar.bat" e as pastas "web" e "imagens". Entre nela e siga o
    Passo 1 adiante.
 
+    Ignore os "Source code"! A área Assets também traz os arquivos
+    Source code (zip) e Source code (tar.gz): são gerados pelo GitHub e
+    vêm só com o código, sem o programa — não servem para instalar.
+
     Só quer o programa, sem instalar? Na mesma página tem o
     Controle-de-Veiculos.exe — dois cliques e abre (é o programa avulso;
     ele não traz a pasta "web\" da versão de celular).
