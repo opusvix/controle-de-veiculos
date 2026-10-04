@@ -1277,8 +1277,13 @@ def test_web_e_bat():
     for marca in ("PastaBaseWindows", "ENTER ja instala na pasta padrao do Windows",
                   "HKCU:\\Software\\Controle de Veiculos", "InstallDir",
                   "Remover-VersaoAntiga", "RunAs",
-                  "Documentos\\ControleVeiculos"):
+                  "Documentos\\ControleVeiculos",
+                  "Digitou a PASTA BASE",
+                  '$ultima -ine "Controle de Veiculos"',
+                  '"README.txt", "INSTALAR-COMO-USAR.txt"'):
         check(marca in ps1, f"instalador tem {marca}")
+    check('.Extension -eq ".md"' not in ps1,
+          "remoção da versão antiga com lista branca (nunca *.md/*.txt soltos)")
     comando = ("$t = Get-Content -LiteralPath $env:INSTALAR_PS1 -Raw; "
                "[void][scriptblock]::Create($t)")
     proc = subprocess.run(

@@ -91,9 +91,17 @@ function Remover-VersaoAntiga([string]$pasta, [string]$exeAntigo) {
                 Remove-Item -LiteralPath $dir -Recurse -Force -ErrorAction Stop
             }
         }
-        Get-ChildItem -LiteralPath $pasta -File -ErrorAction SilentlyContinue |
-            Where-Object { $_.Extension -eq ".md" -or $_.Extension -eq ".txt" } |
-            Remove-Item -Force -ErrorAction SilentlyContinue
+        # lista branca: so os guias que o proprio instalador copia. Nunca
+        # apagamos *.md/*.txt soltos na raiz, mesmo que o usuario tenha
+        # instalado direto numa pasta de arquivos dele.
+        $guias = @("README.md", "INSTALAR-COMO-USAR.md",
+                   "README.txt", "INSTALAR-COMO-USAR.txt")
+        foreach ($guia in $guias) {
+            $arquivo = Join-Path $pasta $guia
+            if (Test-Path -LiteralPath $arquivo) {
+                Remove-Item -LiteralPath $arquivo -Force -ErrorAction SilentlyContinue
+            }
+        }
     } catch {
         Write-Host "  Aviso: nao deu para apagar tudo ($($_.Exception.Message))." -ForegroundColor Yellow
         Write-Host "  Os arquivos novos vao por cima dos antigos." -ForegroundColor Yellow
@@ -144,12 +152,15 @@ if ($marca -and $marca.InstallDir) {
 
 # ------------------------------------------------------------------ pasta
 $pastaPadrao = Join-Path (PastaBaseWindows) "Controle de Veiculos"
+$digitouPasta = $false
 if ($interativo) {
     Write-Host "  Escolha a pasta do programa."
     Write-Host "  ENTER ja instala na pasta padrao do Windows."
+    Write-Host "  Digitou a PASTA BASE? Ele cria Controle de Veiculos dentro."
     Write-Host ""
     $Destino = Read-Host "  Pasta de instalacao [$pastaPadrao]"
     if ([string]::IsNullOrWhiteSpace($Destino)) { $Destino = $pastaPadrao }
+    else { $digitouPasta = $true }
 }
 
 $Destino = $Destino.Trim().Trim('"')
@@ -158,6 +169,18 @@ try {
 } catch {
     Write-Host "  Caminho invalido: $Destino" -ForegroundColor Red
     Sair 1
+}
+
+# O caminho digitado no prompt e a PASTA BASE: o programa ganha a pasta
+# dele dentro (D:/Documentos vira D:\Documentos\Controle de Veiculos).
+# Nao dobramos se ja termina em Controle de Veiculos, e o -Destino do modo
+# scriptado e o ENTER do padrao continuam exatamente como estao.
+if ($digitouPasta) {
+    $Destino = $Destino.TrimEnd('\')
+    $ultima = $Destino.Split('\')[-1]
+    if ($ultima -ine "Controle de Veiculos") {
+        $Destino = "$Destino\Controle de Veiculos"
+    }
 }
 
 $mesmaPasta = (Normaliza $Destino) -eq (Normaliza $raiz)

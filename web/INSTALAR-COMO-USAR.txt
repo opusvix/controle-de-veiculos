@@ -83,8 +83,10 @@ A janela já vem com a pasta padrão do Windows preenchida:
     Pasta de instalacao [C:\Program Files\Controle de Veiculos]:
 
 - Quer instalar no lugar certo? Nem digite nada: é só apertar Enter.
-- Avançado e quer outra pasta? Digite o caminho (ex.: "D:\Programas\Veiculos")
-  e aperte Enter.
+- Quer outra pasta? Digite a pasta base (ex.: "D:\Documentos") e aperte
+  Enter — o instalador ele mesmo cria a pasta "Controle de Veiculos"
+  dentro dela e instala tudo lá. O caminho final aparece na linha
+  Destino: antes de começar (ex.: "D:\Documentos\Controle de Veiculos").
 - Se já existe uma versão instalada, o instalador mostra o endereço dela e a
   remove antes de copiar a nova — a pasta com os seus dados nunca é apagada.
 - Depois do Enter o Windows pode perguntar *"Deseja permitir que este app faça

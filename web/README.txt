@@ -47,9 +47,10 @@ Como abrir
 ----------
 
 - Pelo instalador (recomendado): dois cliques em "Instalar.bat", Enter na
-  pasta sugerida ("C:\Program Files\Controle de Veiculos"; quem sabe o que faz pode
-  digitar outra) e Sim no pedido do Windows — ele remove uma versão anterior,
-  se houver, e cria o atalho Controle de Veículos na Área de Trabalho.
+  pasta sugerida ("C:\Program Files\Controle de Veiculos"; pode digitar outra — é a
+  pasta base, ele cria "Controle de Veiculos" dentro dela) e Sim no pedido do
+  Windows — ele remove uma versão anterior, se houver, e cria o atalho
+  Controle de Veículos na Área de Trabalho.
 - Direto: dois cliques no atalho da Área de Trabalho ou em
   "dist\Controle de Veículos.exe" (arquivo único de ~12 MB, funciona em qualquer
   Windows 10/11 sem instalar nada; também roda de um pendrive).
