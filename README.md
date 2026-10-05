@@ -384,6 +384,25 @@ As imagens que ele não faz são `08-celular.png` (tirada do navegador) e
 em si continua sem nenhuma biblioteca externa. Depois de regenerar, confira se
 todos os arquivos referenciados em `*.md` existem.
 
+## Site público (demonstração online)
+
+O site fica em [`docs/`](docs/) e é publicado de graça pelo **GitHub Pages**
+(<https://opusvix.github.io/controle-de-veiculos/>): a landing `docs/index.html`
+apresenta o produto para leads, e o botão **Testar online** abre a
+demonstração em `docs/app/` — o mesmo `web/controle-veiculos.html` do pacote,
+com um **teste de 7 dias** que só ativa nesse host (no computador dos clientes
+ele nunca liga; para testar localmente use `?demo=1`).
+
+Depois de mudar algo em `web\`, recrie as cópias e publique:
+
+```powershell
+python tools\publicar_site.py   # recria docs\app\ e docs\imagens\ de web\
+python tests\test_smoke.py      # 16 grupos (cobrem cópias e landing)
+git add docs tools tests web && git push
+```
+
+O push já atualiza o site: o Pages publica a pasta `docs/` do ramo `main`.
+
 ## Divulgação (posts, stories e QR code)
 
 As artes para as redes ficam em [`divulgacao/`](divulgacao/): o QR do link de

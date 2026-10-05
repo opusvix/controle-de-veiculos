@@ -339,6 +339,29 @@ code.kbd{
   cursor:pointer;padding:6px 0;text-decoration:underline
 }
 .link-btn:hover{color:var(--primary-2)}
+
+/* ==================== teste de 7 dias (demonstração online) ==================== */
+.trial-badge{
+  position:fixed; right:12px; bottom:calc(14px + env(safe-area-inset-bottom));
+  z-index:75; background:var(--surface); color:var(--primary);
+  border:1px solid var(--border); border-radius:999px; padding:7px 13px;
+  font-size:.8rem; font-weight:700; box-shadow:var(--shadow); pointer-events:none
+}
+.trial-badge[hidden]{display:none}
+.trial-root{
+  position:fixed; inset:0; z-index:100; background:var(--bg);
+  display:flex; align-items:center; justify-content:center; padding:16px; overflow:auto
+}
+.trial-root[hidden]{display:none}
+.trial-card{
+  width:min(440px,100%); background:var(--surface); border:1px solid var(--border);
+  border-radius:20px; padding:24px 22px; box-shadow:var(--shadow)
+}
+.trial-card h2{font-size:1.2rem;margin:0 0 6px}
+.trial-card .sub{color:var(--muted);font-size:.92rem;margin:0}
+.trial-card .nota{color:var(--muted);font-size:.82rem;margin:14px 0 0}
+.trial-acoes{display:flex;flex-direction:column;gap:9px;margin-top:18px}
+.trial-acoes .btn{width:100%;text-decoration:none}
 .ajuda-corpo{
   white-space:pre-wrap; word-break:break-word; font-family:ui-monospace,Consolas,monospace;
   font-size:.8rem; line-height:1.5; background:var(--surface-2); border:1px solid var(--border);
@@ -433,6 +456,24 @@ html[data-theme="dark"] .fab{color:#08111f}
 </style>
 </head>
 <body>
+
+<!-- ==================== TESTE DE 7 DIAS (demonstração online) ==================== -->
+<div class="trial-badge" id="trial-badge" hidden>Teste grátis</div>
+<div class="trial-root" id="trial-root" hidden>
+  <div class="trial-card" role="dialog" aria-labelledby="trial-titulo">
+    <h2 id="trial-titulo">Seu teste de 7 dias terminou</h2>
+    <p class="sub">Obrigado por experimentar o Controle de Veículos. Escolha um
+      dos caminhos abaixo e continue de onde parou.</p>
+    <div class="trial-acoes">
+      <button class="btn primary" type="button" id="trial-exportar">Baixar meus dados (dados.json)</button>
+      <a class="btn" id="trial-baixar" href="https://github.com/opusvix/controle-de-veiculos/releases/latest" target="_blank" rel="noopener">Baixar o programa para o Windows</a>
+      <a class="btn" id="trial-email" href="mailto:esgprojetos26@gmail.com?subject=Controle%20de%20Ve%C3%ADculos%20%E2%80%94%20teste%20de%207%20dias%20encerrado">Falar com a equipe por e-mail</a>
+    </div>
+    <p class="nota">Este é o modo demonstração: os dados ficam salvos apenas
+      neste navegador. A versão completa roda no seu computador, com os dados
+      só com você.</p>
+  </div>
+</div>
 
 <!-- ==================== TELA DE ACESSO ==================== -->
 <div class="login-root" id="login-root">
@@ -830,6 +871,7 @@ const LS_THEME = "controlekm.tema";
 const LS_ACTIVE = "controlekm.veiculo";
 const LS_CONTA = "controlekm.conta";             // usuário/senha deste aparelho
 const LS_SYNC = "controlekm.sincronizacao";      // cópia da última sincronização
+const LS_TRIAL = "controlekm.teste7";            // demonstração online: 7 dias
 
 let store = { version: 2, vehicles: [], refuels: [], maintenances: [] };
 let activeVehicleId = null;
@@ -2951,6 +2993,43 @@ $("login-form").addEventListener("submit", tentarEntrar);
 $("login-manual").addEventListener("click", abrirAjuda);
 $("login-esqueci").addEventListener("click", esqueciSenha);
 
+/* ---------------------- teste de 7 dias (demonstração online) ---------------------- */
+// O modo demonstração só liga no host publicado (allowlist) ou com ?demo=1
+// para testar localmente. No computador dos clientes (Servidor Wi-Fi, file://,
+// IP da rede) isto nunca ativa: é o mesmo arquivo do produto, sem cópia separada.
+const DEMO_HOSTS = ["opusvix.github.io"];
+function modoDemo() {
+  try {
+    if (new URLSearchParams(location.search).has("demo")) return true;
+    if (location.protocol !== "http:" && location.protocol !== "https:") return false;
+    return DEMO_HOSTS.some(h => location.hostname === h ||
+                                location.hostname.endsWith("." + h));
+  } catch (e) { return false; }
+}
+function trialGerenciar() {
+  const badge = $("trial-badge"), painel = $("trial-root");
+  if (!modoDemo()) { badge.hidden = true; painel.hidden = true; return; }
+  const seteDias = 7 * 24 * 60 * 60 * 1000;
+  let t = null;
+  try { t = JSON.parse(localStorage.getItem(LS_TRIAL) || "null"); } catch (e) { t = null; }
+  if (!t || typeof t.inicio !== "number" || typeof t.fim !== "number") {
+    t = { inicio: Date.now(), fim: Date.now() + seteDias };
+    try { localStorage.setItem(LS_TRIAL, JSON.stringify(t)); } catch (e) { /* ok */ }
+  }
+  const restam = t.fim - Date.now();
+  if (restam <= 0) {           // dia 8: bloqueia a tela até ele escolher uma saída
+    badge.hidden = true;
+    painel.hidden = false;
+    return;
+  }
+  const dias = Math.ceil(restam / (24 * 60 * 60 * 1000));
+  badge.textContent = dias === 1 ? "Teste grátis: 1 dia restante"
+                                 : "Teste grátis: " + dias + " dias restantes";
+  badge.hidden = false;
+  painel.hidden = true;
+}
+$("trial-exportar").addEventListener("click", downloadData);
+
 /* ---------------------- inicialização ---------------------- */
 function renderAll() {
   renderVehicleSelect();
@@ -2995,6 +3074,8 @@ function init() {
 }
 init();
 mostrarLogin();
+trialGerenciar();
+setInterval(trialGerenciar, 60 * 60 * 1000);   // bloqueia no dia 8 sem recarregar
 </script>
 </body>
 </html>

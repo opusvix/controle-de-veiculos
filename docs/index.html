@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Controle de Veículos — abastecimentos, manutenções e custos do seu carro</title>
+<meta name="description" content="Programa simples para registrar abastecimentos, manutenções, consumo e custos do veículo. Teste online por 7 dias ou baixe para Windows. Os dados ficam só com você.">
+<style>
+  :root{
+    --bg:#eef1f5; --surface:#ffffff; --surface-2:#f6f8fb; --text:#0f172a;
+    --muted:#64748b; --border:#e2e8f0; --primary:#2563eb; --primary-2:#1d4ed8;
+    --primary-soft:#e8f0fe; --ok:#16a34a; --ok-soft:#dcfce7; --warn-soft:#fef3c7;
+    --shadow:0 1px 2px rgba(15,23,42,.06),0 8px 24px rgba(15,23,42,.06);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0b1220; --surface:#121a2b; --surface-2:#182238; --text:#e6edf7;
+      --muted:#93a3ba; --border:#23304a; --primary:#60a5fa; --primary-2:#3b82f6;
+      --primary-soft:#172554; --ok:#4ade80; --ok-soft:#12291c; --warn-soft:#33260b;
+      --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);
+    }
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.55; -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--primary)}
+  .wrap{max-width:1060px; margin:0 auto; padding:0 20px}
+
+  /* topo */
+  header.topo{border-bottom:1px solid var(--border); background:var(--surface); position:sticky; top:0; z-index:10}
+  .topo .wrap{display:flex; align-items:center; gap:14px; min-height:62px; flex-wrap:wrap}
+  .marca{display:flex; align-items:center; gap:10px; font-weight:800; text-decoration:none; color:var(--text)}
+  .marca svg{width:30px; height:30px; border-radius:9px; background:var(--primary-soft); color:var(--primary); padding:5px}
+  .topo nav{margin-left:auto; display:flex; gap:8px; flex-wrap:wrap}
+
+  /* botões */
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    min-height:46px; padding:11px 18px; border-radius:12px; font-weight:700;
+    font-size:.95rem; text-decoration:none; border:1px solid var(--border);
+    background:var(--surface-2); color:var(--text); cursor:pointer;
+  }
+  .btn:hover{border-color:var(--primary)}
+  .btn.primary{background:var(--primary); border-color:var(--primary); color:#fff}
+  .btn.primary:hover{background:var(--primary-2)}
+  .btn.mini{min-height:38px; padding:8px 14px; font-size:.87rem}
+
+  /* hero */
+  .hero{padding:56px 0 34px; text-align:center}
+  .hero h1{font-size:clamp(1.7rem,4vw,2.6rem); line-height:1.15; margin:0 0 12px}
+  .hero .lead{max-width:680px; margin:0 auto 22px; color:var(--muted); font-size:1.06rem}
+  .hero .acoes{display:flex; gap:10px; justify-content:center; flex-wrap:wrap}
+  .hero .nota{margin-top:14px; color:var(--muted); font-size:.86rem}
+  .selos{display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:18px}
+  .selo{background:var(--ok-soft); color:var(--ok); border-radius:999px; padding:5px 12px; font-size:.8rem; font-weight:800}
+  .selo.azul{background:var(--primary-soft); color:var(--primary)}
+
+  /* prints */
+  .prints{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px; padding:16px 0 44px}
+  .prints figure{margin:0; background:var(--surface); border:1px solid var(--border); border-radius:16px; overflow:hidden; box-shadow:var(--shadow)}
+  .prints img{display:block; width:100%; height:auto}
+  .prints figcaption{padding:9px 13px; font-size:.82rem; color:var(--muted); border-top:1px solid var(--border)}
+
+  /* seções */
+  section{padding:34px 0}
+  section h2{font-size:1.45rem; margin:0 0 6px}
+  section .sub{color:var(--muted); margin:0 0 22px}
+  .cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px}
+  .card{background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:18px 16px; box-shadow:var(--shadow)}
+  .card h3{margin:10px 0 6px; font-size:1.02rem}
+  .card p{margin:0; color:var(--muted); font-size:.92rem}
+  .ico{width:38px; height:38px; border-radius:11px; background:var(--primary-soft); color:var(--primary);
+       display:flex; align-items:center; justify-content:center; font-size:1.1rem; font-weight:800}
+
+  /* passos */
+  .passos{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; counter-reset:p}
+  .passo{background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:18px 16px; position:relative; box-shadow:var(--shadow)}
+  .passo::before{counter-increment:p; content:counter(p); position:absolute; top:-14px; left:16px;
+    background:var(--primary); color:#fff; width:28px; height:28px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-weight:800; font-size:.88rem}
+  .passo h3{margin:6px 0 6px; font-size:1rem}
+  .passo p{margin:0; color:var(--muted); font-size:.92rem}
+
+  /* chamada final */
+  .final{background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:30px 24px; text-align:center; box-shadow:var(--shadow)}
+  .final h2{margin-bottom:8px}
+  .final .acoes{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:16px}
+
+  /* faq */
+  .faq details{background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:14px 16px; margin-bottom:10px}
+  .faq summary{font-weight:700; cursor:pointer}
+  .faq p{margin:10px 0 0; color:var(--muted); font-size:.93rem}
+
+  footer{border-top:1px solid var(--border); background:var(--surface); margin-top:30px; padding:22px 0; color:var(--muted); font-size:.88rem}
+  footer .wrap{display:flex; gap:10px 22px; flex-wrap:wrap; align-items:center}
+  footer nav{margin-left:auto; display:flex; gap:16px; flex-wrap:wrap}
+</style>
+</head>
+<body>
+
+<header class="topo">
+  <div class="wrap">
+    <a class="marca" href="./">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16M2 21h12M6 8h4M14 9h3a2 2 0 0 1 2 2v6a2 2 0 0 0 4 0V9l-3-3"/></svg>
+      Controle de Veículos
+    </a>
+    <nav>
+      <a class="btn mini" href="app/">Testar online</a>
+      <a class="btn mini primary" href="https://github.com/opusvix/controle-de-veiculos/releases/latest">Baixar</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="selos">
+      <span class="selo">Teste online por 7 dias</span>
+      <span class="selo azul">Sem cadastro de cartão</span>
+      <span class="selo azul">Dados só com você</span>
+    </div>
+    <h1>Abastecimentos, manutenções, consumo e custos do seu carro — sem complicação</h1>
+    <p class="lead">Um programa simples, em português, que roda no Windows e
+      também no navegador. Você registra, ele calcula: quanto gastou, quanto
+      anda e quando vem a próxima revisão.</p>
+    <div class="acoes">
+      <a class="btn primary" href="app/">Testar agora online (7 dias)</a>
+      <a class="btn" href="https://github.com/opusvix/controle-de-veiculos/releases/latest">Baixar para Windows</a>
+    </div>
+    <p class="nota">Windows 10/11 · instala com um Enter · sem precisar de Python</p>
+  </div>
+
+  <div class="prints">
+    <figure>
+      <img src="imagens/03-tela-inicial.png" alt="Tela de Abastecimentos com histórico e totais" loading="lazy">
+      <figcaption>Abastecimentos: histórico, litros, valor e consumo</figcaption>
+    </figure>
+    <figure>
+      <img src="imagens/06-relatorios.png" alt="Aba de Relatórios com gráfico de consumo por período" loading="lazy">
+      <figcaption>Relatórios: consumo e custos por período, em gráfico</figcaption>
+    </figure>
+    <figure>
+      <img src="imagens/08-celular.png" alt="O mesmo programa aberto no celular pelo navegador" loading="lazy">
+      <figcaption>No celular pelo navegador, com sincronização para o PC</figcaption>
+    </figure>
+  </div>
+
+  <section>
+    <h2>O que ele faz por você</h2>
+    <p class="sub">Tudo o que um controle de frota precisa — e nada além disso.</p>
+    <div class="cards">
+      <div class="card"><div class="ico">R$</div>
+        <h3>Custo real do veículo</h3>
+        <p>Cada abastecimento vira custo por quilômetro e por mês. Veja
+          quanto o carro consome de verdade.</p></div>
+      <div class="card"><div class="ico">✓</div>
+        <h3>Manutenções e revisões</h3>
+        <p>Registre trocas de óleo, revisões e pneus — e receba o lembrete
+          da próxima antes de esquecer.</p></div>
+      <div class="card"><div class="ico">🔒</div>
+        <h3>Privacidade primeiro</h3>
+        <p>Os dados ficam no seu computador (ou no seu navegador), não em
+          servidor de ninguém. Funciona offline.</p></div>
+      <div class="card"><div class="ico">→</div>
+        <h3>Fácil de instalar</h3>
+        <p>Baixe o pacote, dê dois cliques em Instalar.bat e aperte Enter.
+          Atualizar é só rodar de novo.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Teste em 3 passos — agora mesmo</h2>
+    <p class="sub">Sem instalar nada e sem informar cartão: 7 dias para experimentar.</p>
+    <div class="passos">
+      <div class="passo"><h3>Abra a demonstração</h3>
+        <p>Clique em <b>Testar agora online</b>: o programa abre direto no
+          navegador, no celular ou no computador.</p></div>
+      <div class="passo"><h3>Crie seu usuário e senha</h3>
+        <p>No primeiro acesso você cria a sua conta — ela fica gravada
+          apenas neste navegador.</p></div>
+      <div class="passo"><h3>Cadastre e use</h3>
+        <p>Adicione um veículo, lance um abastecimento e veja os relatórios
+          se preencherem. Você tem 7 dias.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Prefere instalar no computador?</h2>
+    <p class="sub">A versão completa é um arquivo único para Windows 10/11.</p>
+    <div class="cards">
+      <div class="card"><h3>1. Baixe o pacote</h3>
+        <p>Na página de releases, baixe o <b>Controle-de-veiculos.zip</b> e
+          extraia tudo.</p></div>
+      <div class="card"><h3>2. Rode o Instalar.bat</h3>
+        <p>Duplo clique e <b>Enter</b> na pasta sugerida (ou digite a sua;
+          ele cria a pasta do programa dentro).</p></div>
+      <div class="card"><h3>3. Abra pelo atalho</h3>
+        <p>O atalho <b>Controle de Veículos</b> aparece na Área de Trabalho.
+          Passo a passo com fotos no manual.</p></div>
+    </div>
+    <div class="acoes" style="display:flex; gap:10px; flex-wrap:wrap; margin-top:18px">
+      <a class="btn primary" href="https://github.com/opusvix/controle-de-veiculos/releases/latest">Baixar o programa</a>
+      <a class="btn" href="https://github.com/opusvix/controle-de-veiculos/blob/main/INSTALAR-COMO-USAR.md">Ver o manual com fotos</a>
+    </div>
+  </section>
+
+  <section class="faq">
+    <h2>Perguntas frequentes</h2>
+    <p class="sub">O básico, respondido sem enrolação.</p>
+    <details open>
+      <summary>Preciso instalar Python ou alguma coisa extra?</summary>
+      <p>Não. Para Windows existe o instalador pronto (um Enter). A
+        demonstração online não instala nada: ela abre no navegador.</p>
+    </details>
+    <details>
+      <summary>Para onde vão os meus dados?</summary>
+      <p>Ficam no seu dispositivo. Na demonstração, apenas no navegador
+        deste aparelho; na versão instalada, numa pasta do seu computador.
+        Nada vai para servidor de ninguém.</p>
+    </details>
+    <details>
+      <summary>O que acontece depois dos 7 dias de teste?</summary>
+      <p>A tela mostra três caminhos: <b>baixar os seus dados</b> (um
+        arquivo dados.json), <b>baixar o programa</b> para o seu computador
+        ou <b>falar com a equipe</b> por e-mail.</p>
+    </details>
+    <details>
+      <summary>O teste exige cartão ou cadastro?</summary>
+      <p>Não. Não pedimos cartão, e-mail nem nada: é só abrir e usar por
+        7 dias.</p>
+    </details>
+  </section>
+
+  <div class="final">
+    <h2>Experimente agora — leva 10 segundos</h2>
+    <p class="sub">Se gostar, leve o programa para o seu computador. Se
+      tiver dúvida, é só mandar um e-mail.</p>
+    <div class="acoes">
+      <a class="btn primary" href="app/">Testar agora online (7 dias)</a>
+      <a class="btn" href="mailto:esgprojetos26@gmail.com?subject=Controle%20de%20Ve%C3%ADculos%20%E2%80%94%20quero%20saber%20mais">Falar com a equipe</a>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Controle de Veículos — os dados ficam só com você.</span>
+    <nav>
+      <a href="app/">Demonstração</a>
+      <a href="https://github.com/opusvix/controle-de-veiculos/releases/latest">Downloads</a>
+      <a href="https://github.com/opusvix/controle-de-veiculos">GitHub</a>
+      <a href="mailto:esgprojetos26@gmail.com">esgprojetos26@gmail.com</a>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>

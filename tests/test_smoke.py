@@ -1246,6 +1246,29 @@ def test_web_e_bat():
     check(html.count("<script") == html.count("</script>"), "<script> balanceado")
     check(html.count("<div") == html.count("</div>"), "<div> balanceado")
 
+    # demonstração online: trial de 7 dias (só no host publicado) e CTA
+    for marca in ('id="trial-root"', 'id="trial-badge"', "const LS_TRIAL",
+                  "function trialGerenciar", '"opusvix.github.io"',
+                  "mailto:esgprojetos26@gmail.com", "DEMO_HOSTS"):
+        check(marca in html, f"página tem {marca}")
+
+    # site em docs\ (GitHub Pages): cópias idênticas às de web\ + landing
+    site = raiz / "docs"
+    for origem, copia in [("web/controle-veiculos.html", "app/index.html"),
+                          ("web/INSTALAR-COMO-USAR.txt", "app/INSTALAR-COMO-USAR.txt")]:
+        orig, cop = raiz / origem, site / copia
+        check(orig.exists() and cop.exists(), f"site tem {copia}")
+        if orig.exists() and cop.exists():
+            check(cop.read_bytes() == orig.read_bytes(),
+                  f"docs\\{copia} igual a {origem} (rode tools\\publicar_site.py)")
+    landing = site / "index.html"
+    check(landing.exists(), "site tem a landing docs\\index.html")
+    if landing.exists():
+        tlanding = landing.read_text(encoding="utf-8")
+        for marca in ('href="app/"', "mailto:esgprojetos26@gmail.com",
+                      "releases/latest", "Testar agora online"):
+            check(marca in tlanding, f"landing tem {marca}")
+
     bat = (raiz / "web" / "Servidor Wi-Fi.bat").read_bytes()
     check(max(bat) < 128, "Servidor Wi-Fi.bat só com caracteres ASCII")
     check(b"\r\n" in bat and b"\n" not in bat.replace(b"\r\n", b""),
