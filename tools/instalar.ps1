@@ -56,6 +56,17 @@ function PrecisaAdmin([string]$pasta) {
     return $false
 }
 
+function Desbloquear([string]$pasta) {
+    # Remove a "marca da internet" (Zone.Identifier) que o Windows cola nos
+    # arquivos de um .zip baixado. Sem ela o SmartScreen nao barra o .exe por
+    # nao conhecer o editor (programa sem assinatura de paga) - por isso o
+    # aviso "Windows protegeu o PC" nao aparece depois de instalar.
+    if ([string]::IsNullOrWhiteSpace($pasta)) { return }
+    if (-not (Test-Path -LiteralPath $pasta)) { return }
+    Get-ChildItem -LiteralPath $pasta -Recurse -File -Force -ErrorAction SilentlyContinue |
+        Unblock-File -ErrorAction SilentlyContinue
+}
+
 function Remover-VersaoAntiga([string]$pasta, [string]$exeAntigo) {
     Write-Host ""
     Write-Host "  Versao anterior em: $pasta" -ForegroundColor Yellow
@@ -125,6 +136,11 @@ function Remover-VersaoAntiga([string]$pasta, [string]$exeAntigo) {
 function MarcaAtual() {
     return Get-ItemProperty -Path $chave -ErrorAction SilentlyContinue
 }
+
+# O pacote veio de um .zip baixado: os arquivos carregam a "marca da
+# internet" e o SmartScreen barra o .exe por nao conhecer o editor. Somos nos
+# os autores - a gente mesma remove a marca, antes de qualquer passo.
+Desbloquear $raiz
 
 # --------------------------------------------------------------- cabecalho
 $Host.UI.RawUI.WindowTitle = "Instalar Controle de Veiculos"
@@ -276,6 +292,9 @@ if ($mesmaPasta) {
     }
     Write-Host "  Programa copiado para a pasta." -ForegroundColor Green
 }
+
+# o destino tambem fica sem a marca: o .exe instalado abre sem aviso
+Desbloquear $Destino
 
 # ------------------------------------------------------------- atalho
 $exeInstalado = $null

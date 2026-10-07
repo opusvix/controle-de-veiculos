@@ -143,10 +143,28 @@ forma de trabalho:
 
 ## Passo 7 — Se o Windows avisar que o programa é "desconhecido"
 
-Isso acontece porque o programa não foi comprado numa loja. **Não é vírus.**
+Isso acontece porque o programa não tem assinatura digital de editor
+(certificado pago). **Não é vírus.**
 
 1. Clique em **Mais informações**.
 2. Clique em **Executar assim mesmo**.
+
+O aviso pode aparecer em dois lugares, e cada um tem seu jeito:
+
+- **"O Windows protegeu o PC" (SmartScreen)** — é o caso acima: clique em
+  **Mais informações** e depois em **Executar assim mesmo**.
+- **Programa rodando direto da pasta extraída** — clique com o botão direito
+  no `.exe` → **Propriedades** → marque **Desbloquear** → OK. (Instalando pelo
+  **Instalar.bat**, ele já remove essa marca sozinho e o programa instalado
+  abre sem aviso.)
+- **Windows 11, "Controle Inteligente de Aplicativos"** — é mais rigoroso e
+  não oferece "executar assim mesmo". Abra o **Windows Security** e digite
+  "Controle Inteligente de Aplicativos" na busca. Em **Ativado** ele barra
+  programas sem assinatura; dá para desligar, mas atenção: depois de
+  desligar, só reinstalando o Windows para ligar de novo.
+
+A solução definitiva é **assinatura digital** — e existe assinatura gratuita
+para projetos de código aberto (SignPath Foundation).
 
 ---
 

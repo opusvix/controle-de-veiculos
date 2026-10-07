@@ -1090,6 +1090,12 @@ def test_manuais_txt():
                 continue
             check((raiz / foto).exists(), f"{nome_md} cita {foto} e ela existe")
 
+    # os guias explicam o bloqueio do Windows (SmartScreen e Win11 SAC)
+    manual = (raiz / "INSTALAR-COMO-USAR.md").read_text(encoding="utf-8")
+    for marca in ("Controle Inteligente de Aplicativos", "Desbloquear",
+                  "assinatura digital", "Executar assim mesmo"):
+        check(marca in manual, f"manual explica o bloqueio do Windows ({marca})")
+
     # nenhum arquivo de texto do projeto guarda o caminho da máquina de quem fez
     proibidos = ["2026" + "-09-Veiculos", "D" + ":\\" + "Projetos",
                  "D" + ":/" + "Projetos"]
@@ -1266,7 +1272,8 @@ def test_web_e_bat():
     if landing.exists():
         tlanding = landing.read_text(encoding="utf-8")
         for marca in ('href="app/"', "mailto:esgprojetos26@gmail.com",
-                      "releases/latest", "Testar agora online"):
+                      "releases/latest", "Testar agora online",
+                      "assinatura digital"):
             check(marca in tlanding, f"landing tem {marca}")
 
     bat = (raiz / "web" / "Servidor Wi-Fi.bat").read_bytes()
@@ -1303,7 +1310,9 @@ def test_web_e_bat():
                   "Documentos\\ControleVeiculos",
                   "Digitou a PASTA BASE",
                   '$ultima -ine "Controle de Veiculos"',
-                  '"README.txt", "INSTALAR-COMO-USAR.txt"'):
+                  '"README.txt", "INSTALAR-COMO-USAR.txt"',
+                  "function Desbloquear", "Unblock-File",
+                  "Desbloquear $raiz", "Desbloquear $Destino"):
         check(marca in ps1, f"instalador tem {marca}")
     check('.Extension -eq ".md"' not in ps1,
           "remoção da versão antiga com lista branca (nunca *.md/*.txt soltos)")

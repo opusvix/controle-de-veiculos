@@ -32,6 +32,25 @@ internet nem por serviço de terceiros.
 Os arquivos ficam em [Releases](https://github.com/opusvix/controle-de-veiculos/releases);
 a página "latest" sempre aponta para a versão mais nova.
 
+## Se o Windows avisar que o programa é "desconhecido"
+
+O `.exe` **não tem assinatura digital** (certificado de editor custa dinheiro),
+então o Windows pode barrar o programa que veio de um download. **Não é vírus.**
+
+- **Instalar.bat** já remove a marca de internet dos arquivos: depois de
+  instalar, o programa abre sem aviso.
+- Na tela "O Windows protegeu o PC": **Mais informações** → **Executar assim mesmo**.
+- Rodando direto da pasta extraída: botão direito no `.exe` → **Propriedades**
+  → marque **Desbloquear** → OK.
+- Windows 11 ("Controle Inteligente de Aplicativos", sem botão de executar
+  assim mesmo): abra o **Windows Security** e procure por
+  **Controle Inteligente de Aplicativos**. Desligar é definitivo (só
+  reinstalando o Windows para ligar de novo).
+
+Detalhes no [`INSTALAR-COMO-USAR.md`](INSTALAR-COMO-USAR.md) (Passo 7). A
+solução definitiva é assinar o programa — há assinatura gratuita para projetos
+de código aberto (SignPath Foundation).
+
 ## Como abrir
 
 - **Pelo instalador (recomendado):** dois cliques em **`Instalar.bat`**, **Enter** na
@@ -348,6 +367,13 @@ Instalação de teste sem travar o prompt:
 
 ```powershell
 '' | powershell -NoProfile -ExecutionPolicy Bypass -File tools\instalar.ps1 -Destino C:\temp\teste
+```
+
+Pacote da release (`Controle-de-veiculos.zip`), com os arquivos atuais de
+`dist\`, `web\`, `imagens\` e dos guias (as 23 entradas de sempre):
+
+```powershell
+python tools\gerar_zip.py    # grava o zip na raiz do projeto
 ```
 
 ## Testes

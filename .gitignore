@@ -18,6 +18,7 @@ dados.json
 # --------------------------------------------------------------- temporários
 *.log
 *.tmp
+Controle-de-veiculos.zip
 Thumbs.db
 desktop.ini
 .vscode/
