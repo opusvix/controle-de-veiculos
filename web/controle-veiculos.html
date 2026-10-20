@@ -466,7 +466,7 @@ html[data-theme="dark"] .fab{color:#08111f}
       dos caminhos abaixo e continue de onde parou.</p>
     <div class="trial-acoes">
       <button class="btn primary" type="button" id="trial-exportar">Baixar meus dados (dados.json)</button>
-      <a class="btn" id="trial-baixar" href="https://github.com/opusvix/controle-de-veiculos/releases/latest" target="_blank" rel="noopener">Baixar o programa para o Windows</a>
+      <a class="btn" id="trial-baixar" href="../download/Controle-de-veiculos.zip" target="_blank" rel="noopener">Baixar o programa para o Windows</a>
       <a class="btn" id="trial-email" href="mailto:esgprojetos26@gmail.com?subject=Controle%20de%20Ve%C3%ADculos%20%E2%80%94%20teste%20de%207%20dias%20encerrado">Falar com a equipe por e-mail</a>
     </div>
     <p class="nota">Este é o modo demonstração: os dados ficam salvos apenas
@@ -2994,10 +2994,10 @@ $("login-manual").addEventListener("click", abrirAjuda);
 $("login-esqueci").addEventListener("click", esqueciSenha);
 
 /* ---------------------- teste de 7 dias (demonstração online) ---------------------- */
-// O modo demonstração só liga no host publicado (allowlist) ou com ?demo=1
+// O modo demonstração só liga no host publicado (allowlist: GitHub Pages e espelho Netlify) ou com ?demo=1
 // para testar localmente. No computador dos clientes (Servidor Wi-Fi, file://,
 // IP da rede) isto nunca ativa: é o mesmo arquivo do produto, sem cópia separada.
-const DEMO_HOSTS = ["opusvix.github.io"];
+const DEMO_HOSTS = ["opusvix.github.io", "netlify.app"];
 function modoDemo() {
   try {
     if (new URLSearchParams(location.search).has("demo")) return true;

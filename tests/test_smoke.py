@@ -1272,7 +1272,7 @@ def test_web_e_bat():
     if landing.exists():
         tlanding = landing.read_text(encoding="utf-8")
         for marca in ('href="app/"', "mailto:esgprojetos26@gmail.com",
-                      "releases/latest", "Testar agora online",
+                      "download/Controle-de-veiculos.zip", "Testar agora online",
                       "assinatura digital"):
             check(marca in tlanding, f"landing tem {marca}")
 
