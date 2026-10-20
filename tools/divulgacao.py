@@ -13,9 +13,9 @@ Sai na pasta divulgacao\\:
     story-1080x1920.png       arte vertical para stories (com QR)
     capa-reels-1080x1920.png  capa de Reels/TikTok (texto no centro)
 
-O QR e os links apontam para a página da release mais nova
-(https://github.com/opusvix/controle-de-veiculos/releases/latest): quando
-sair uma versão nova, estas artes continuam valendo sem mudar nada.
+O QR e os links apontam para o pacote de download do site oficial
+(https://controle-de-veiculos.netlify.app/download/Controle-de-veiculos.zip):
+como o nome do arquivo não muda, as artes continuam valendo sem mudar nada.
 
 Os textos (legendas por rede e roteiro de Reels) ficam em
 divulgacao\\DIVULGACAO.md.
@@ -31,8 +31,8 @@ RAIZ = Path(__file__).resolve().parents[1]
 PASTA_IMG = RAIZ / "imagens"
 SAIDA = RAIZ / "divulgacao"
 
-LINK = "https://github.com/opusvix/controle-de-veiculos/releases/latest"
-LINK_CURTO = "github.com/opusvix/controle-de-veiculos/releases"
+LINK = "https://controle-de-veiculos.netlify.app/download/Controle-de-veiculos.zip"
+LINK_CURTO = "controle-de-veiculos.netlify.app"
 
 # cores do programa (controle_veiculos/ui/app.py)
 AZUL = "#2563eb"        # ACCENT

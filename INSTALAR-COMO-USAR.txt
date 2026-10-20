@@ -42,11 +42,10 @@ Parte 1 — Instalando no computador
 Passo 0 — Baixe o programa (primeira vez)
 -----------------------------------------
 
-O programa é aberto e fica no GitHub — é só baixar o pacote:
+O programa é gratuito — é só baixar o pacote do site oficial:
 
-1. Abra a página de downloads: <https://github.com/opusvix/controle-de-veiculos/releases/latest>
-2. Procure a área Assets (no fim da página) e baixe o arquivo
-   Controle-de-veiculos.zip — é o pacote completo, com tudo dentro.
+1. Baixe o pacote: <https://controle-de-veiculos.netlify.app/download/Controle-de-veiculos.zip>
+2. O Controle-de-veiculos.zip é o pacote completo, com tudo dentro.
 3. Abra a pasta Downloads, clique com o botão direito em
    Controle-de-veiculos.zip e escolha Extrair tudo.
 4. Vai surgir uma pasta com os arquivos do programa: é dentro dela que ficam
@@ -433,7 +432,7 @@ Não. Tudo funciona sem internet; seus dados nunca saem do computador nem do cel
 A sincronização usa a sua rede Wi-Fi de casa, só entre os seus aparelhos.
 
 De onde baixo o programa (e a versão nova)?
-Da página de downloads do GitHub: <https://github.com/opusvix/controle-de-veiculos/releases/latest>.
+Do site oficial: <https://controle-de-veiculos.netlify.app/> (botão Baixar).
 Baixe o "Controle-de-veiculos.zip", extraia tudo e rode o "Instalar.bat": se já
 houver uma versão instalada, ele remove a antiga antes (os dados nunca são
 apagados). O mesmo lugar serve para pegar atualizações.

@@ -3,9 +3,9 @@
 Material pronto para divulgar o Controle de Veículos nas redes. As imagens
 ficam nesta pasta; os textos abaixo são para copiar e colar.
 
-O link e o QR de todas as artes apontam para a página da release mais nova:
+O link e o QR de todas as artes apontam para o pacote do site oficial:
 
-<https://github.com/opusvix/controle-de-veiculos/releases/latest>
+<https://controle-de-veiculos.netlify.app/download/Controle-de-veiculos.zip>
 
 Quando sair uma versão nova do programa, **nada precisa ser mudado** nas artes.
 
@@ -50,7 +50,7 @@ nenhuma biblioteca fora da biblioteca padrão.
 > usuário e senha. Seus dados são seus.
 >
 > É gratuito e de código aberto. Dá para instalar em 2 minutos:
-> <https://github.com/opusvix/controle-de-veiculos/releases/latest>
+> <https://controle-de-veiculos.netlify.app/download/Controle-de-veiculos.zip>
 >
 > Se você também perde a noção de quanto o carro "come", testa e me conta o
 > que achou — feedback é bem-vindo. 🚗
@@ -74,7 +74,7 @@ nenhuma biblioteca fora da biblioteca padrão.
 > internet — com senha para ninguém abrir no seu lugar.
 >
 > Baixar é de graça (Windows 10/11):
-> <https://github.com/opusvix/controle-de-veiculos/releases/latest>
+> <https://controle-de-veiculos.netlify.app/download/Controle-de-veiculos.zip>
 >
 > É só baixar o zip, extrair tudo e dar dois cliques em `Instalar.bat` — o
 > passo a passo com fotos vem junto. Manda para aquele amigo que diz que
@@ -104,13 +104,13 @@ Publique junto com `post-feed-1080x1080.png`.
 > Programa novo aqui em casa: **Controle de Veículos** — anota abastecimento,
 > mostra o consumo do carro, avisa quando chega a hora da manutenção e ainda
 > funciona offline (dados ficam no PC, sem nuvem). Gratuito:
-> <https://github.com/opusvix/controle-de-veiculos/releases/latest>
+> <https://controle-de-veiculos.netlify.app/download/Controle-de-veiculos.zip>
 > (baixa o zip, extrai e dá dois cliques em Instalar.bat)
 
 ## Stories (Instagram, Facebook e WhatsApp status)
 
 1. Publique a arte `story-1080x1920.png`.
-2. Adicione o **sticker de link** com o endereço da release (o card branco da
+2. Adicione o **sticker de link** com o endereço do site oficial (o card branco da
    arte já tem o QR — o sticker ajuda quem prefere clicar).
 3. Sticker de **enquete**: "Você sabe quanto gastou no carro mês passado?"
    — *Nem ideia* / *Sei sim*.
