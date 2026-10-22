@@ -62,6 +62,9 @@
   .prints{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px; padding:16px 0 44px}
   .prints figure{margin:0; background:var(--surface); border:1px solid var(--border); border-radius:16px; overflow:hidden; box-shadow:var(--shadow)}
   .prints img{display:block; width:100%; height:auto}
+  .prints .coluna{display:grid; grid-template-rows:1fr 1fr; gap:16px; min-width:0}
+  .prints .coluna figure{display:flex; flex-direction:column; min-height:0}
+  .prints .coluna img{flex:1; min-height:0; object-fit:contain}
   .prints figcaption{padding:9px 13px; font-size:.82rem; color:var(--muted); border-top:1px solid var(--border)}
 
   /* seções */
@@ -134,14 +137,16 @@
   </div>
 
   <div class="prints">
-    <figure>
-      <img src="imagens/03-tela-inicial.png" alt="Tela de Abastecimentos com histórico e totais" loading="lazy">
-      <figcaption>Abastecimentos: histórico, litros, valor e consumo</figcaption>
-    </figure>
-    <figure>
-      <img src="imagens/06-relatorios.png" alt="Aba de Relatórios com gráfico de consumo por período" loading="lazy">
-      <figcaption>Relatórios: consumo e custos por período, em gráfico</figcaption>
-    </figure>
+    <div class="coluna">
+      <figure>
+        <img src="imagens/03-tela-inicial.png" alt="Tela de Abastecimentos com histórico e totais" loading="lazy">
+        <figcaption>Abastecimentos: histórico, litros, valor e consumo</figcaption>
+      </figure>
+      <figure>
+        <img src="imagens/06-relatorios.png" alt="Aba de Relatórios com gráfico de consumo por período" loading="lazy">
+        <figcaption>Relatórios: consumo e custos por período, em gráfico</figcaption>
+      </figure>
+    </div>
     <figure>
       <img src="imagens/08-celular.png" alt="O mesmo programa aberto no celular pelo navegador" loading="lazy">
       <figcaption>No celular pelo navegador, com sincronização para o PC</figcaption>
