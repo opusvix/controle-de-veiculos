@@ -1261,7 +1261,8 @@ def test_web_e_bat():
     # site em docs\ (GitHub Pages): cópias idênticas às de web\ + landing
     site = raiz / "docs"
     for origem, copia in [("web/controle-veiculos.html", "app/index.html"),
-                          ("web/INSTALAR-COMO-USAR.txt", "app/INSTALAR-COMO-USAR.txt")]:
+                          ("web/INSTALAR-COMO-USAR.txt", "app/INSTALAR-COMO-USAR.txt"),
+                          ("INSTALAR-COMO-USAR.md", "app/INSTALAR-COMO-USAR.md")]:
         orig, cop = raiz / origem, site / copia
         check(orig.exists() and cop.exists(), f"site tem {copia}")
         if orig.exists() and cop.exists():
@@ -1273,7 +1274,7 @@ def test_web_e_bat():
         tlanding = landing.read_text(encoding="utf-8")
         for marca in ('href="app/"', "mailto:esgprojetos26@gmail.com",
                       "download/Controle-de-veiculos.zip", "Testar agora online",
-                      "assinatura digital"):
+                      "assinatura digital", "app/INSTALAR-COMO-USAR.md"):
             check(marca in tlanding, f"landing tem {marca}")
 
     bat = (raiz / "web" / "Servidor Wi-Fi.bat").read_bytes()

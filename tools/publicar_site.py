@@ -5,6 +5,7 @@ web\\ (fonte única - o mesmo arquivo que vai dentro do pacote do programa):
 
     web\\controle-veiculos.html  ->  docs\\app\\index.html
     web\\INSTALAR-COMO-USAR.txt  ->  docs\\app\\INSTALAR-COMO-USAR.txt
+    INSTALAR-COMO-USAR.md        ->  docs\\app\\INSTALAR-COMO-USAR.md
 
 e leva as fotos usadas pela landing para docs\\imagens\\.
 
@@ -28,6 +29,7 @@ DOCS = RAIZ / "docs"
 APP = {
     "web/controle-veiculos.html": "app/index.html",
     "web/INSTALAR-COMO-USAR.txt": "app/INSTALAR-COMO-USAR.txt",
+    "INSTALAR-COMO-USAR.md": "app/INSTALAR-COMO-USAR.md",
 }
 FOTOS = [
     "03-tela-inicial.png",
