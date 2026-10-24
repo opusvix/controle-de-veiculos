@@ -375,7 +375,8 @@ code.kbd{
   position:fixed; right:12px; bottom:calc(14px + env(safe-area-inset-bottom));
   z-index:75; background:var(--surface); color:var(--primary);
   border:1px solid var(--border); border-radius:999px; padding:7px 13px;
-  font-size:.8rem; font-weight:700; box-shadow:var(--shadow); pointer-events:none
+  font-size:.8rem; font-weight:700; box-shadow:var(--shadow);
+  pointer-events:auto; cursor:pointer
 }
 .trial-badge[hidden]{display:none}
 .trial-root{
@@ -486,21 +487,24 @@ code.kbd{
 </head>
 <body>
 
-<!-- ==================== TESTE DE 7 DIAS (demonstração online) ==================== -->
-<div class="trial-badge" id="trial-badge" hidden>Teste grátis</div>
+<!-- ==================== MODO DEMONSTRAÇÃO (online) ==================== -->
+<div class="trial-badge" id="trial-badge" hidden>Demonstração</div>
 <div class="trial-root" id="trial-root" hidden>
   <div class="trial-card" role="dialog" aria-labelledby="trial-titulo">
-    <h2 id="trial-titulo">Seu teste de 7 dias terminou</h2>
-    <p class="sub">Obrigado por experimentar o Controle de Veículos. Escolha um
-      dos caminhos abaixo e continue de onde parou.</p>
+    <h2 id="trial-titulo">Você está na demonstração</h2>
+    <p class="sub">Esta é uma demonstração aberta, já com uma frota de exemplo.
+      Explore à vontade: cadastre veículos, lance abastecimentos e veja os
+      relatórios. Quando quiser, volte ao estado inicial.</p>
     <div class="trial-acoes">
-      <button class="btn primary" type="button" id="trial-exportar">Baixar meus dados (dados.json)</button>
+      <button class="btn primary" type="button" id="trial-reiniciar">Reiniciar demonstração</button>
+      <button class="btn" type="button" id="trial-exportar">Baixar meus dados (dados.json)</button>
       <a class="btn" id="trial-baixar" href="../download/Controle-de-veiculos.zip" target="_blank" rel="noopener">Baixar o programa para o Windows</a>
-      <a class="btn" id="trial-email" href="mailto:esgprojetos26@gmail.com?subject=Controle%20de%20Ve%C3%ADculos%20%E2%80%94%20teste%20de%207%20dias%20encerrado">Falar com a equipe por e-mail</a>
+      <a class="btn" id="trial-email" href="mailto:esgprojetos26@gmail.com?subject=Controle%20de%20Ve%C3%ADculos%20%E2%80%94%20demonstra%C3%A7%C3%A3o">Falar com a equipe por e-mail</a>
+      <button class="btn" type="button" id="trial-fechar">Fechar</button>
     </div>
-    <p class="nota">Este é o modo demonstração: os dados ficam salvos apenas
-      neste navegador. A versão completa roda no seu computador, com os dados
-      só com você.</p>
+    <p class="nota">Modo demonstração: os dados ficam salvos apenas neste
+      navegador. A versão completa roda no seu computador, com os dados só
+      com você.</p>
   </div>
 </div>
 
@@ -983,7 +987,8 @@ const LS_THEME = "controlekm.tema";
 const LS_ACTIVE = "controlekm.veiculo";
 const LS_CONTA = "controlekm.conta";             // usuário/senha deste aparelho
 const LS_SYNC = "controlekm.sincronizacao";      // cópia da última sincronização
-const LS_TRIAL = "controlekm.teste7";            // demonstração online: 7 dias
+const LS_TRIAL = "controlekm.teste7";            // (legado) teste de 7 dias — não usado
+const LS_DEMO_SEED = "controlekm.demoSemeada";   // marca que a demo já recebeu os dados de exemplo
 
 let store = { version: 2, vehicles: [], refuels: [], maintenances: [], documents: [], drivers: [] };
 let activeVehicleId = null;
@@ -3493,10 +3498,13 @@ $("login-form").addEventListener("submit", tentarEntrar);
 $("login-manual").addEventListener("click", abrirAjuda);
 $("login-esqueci").addEventListener("click", esqueciSenha);
 
-/* ---------------------- teste de 7 dias (demonstração online) ---------------------- */
+/* ---------------------- modo demonstração (online) ---------------------- */
 // O modo demonstração só liga no host publicado (allowlist: GitHub Pages e espelho Netlify) ou com ?demo=1
 // para testar localmente. No computador dos clientes (Servidor Wi-Fi, file://,
 // IP da rede) isto nunca ativa: é o mesmo arquivo do produto, sem cópia separada.
+// Em vez de um cadeado de 7 dias (que travava a tela e era fácil de burlar), a
+// demo fica sempre aberta, entra sem login e já vem com dados de exemplo. Um
+// botão "Reiniciar demonstração" devolve o estado inicial — igual ao OficinaApp.
 const DEMO_HOSTS = ["opusvix.github.io", "netlify.app"];
 function modoDemo() {
   try {
@@ -3506,29 +3514,101 @@ function modoDemo() {
                                 location.hostname.endsWith("." + h));
   } catch (e) { return false; }
 }
-function trialGerenciar() {
+
+// Data ISO a N dias de hoje (negativo = futuro), para os exemplos parecerem vivos.
+function demoISO(diasAtras) {
+  const d = new Date();
+  d.setDate(d.getDate() - diasAtras);
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
+// Monta uma pequena frota de exemplo: abastecimentos (um suspeito), manutenções
+// (uma revisão vencendo), documentos (um IPVA vencido) e motoristas.
+function demoDados() {
+  const v1 = uid(), v2 = uid(), v3 = uid();
+  const d1 = uid(), d2 = uid();
+  const ab = (vehicle_id, dias, odometer, liters, price, driver_id) => ({
+    id: uid(), vehicle_id, date: demoISO(dias), odometer, liters, price,
+    total: Math.round(liters * price * 100) / 100, full_tank: true,
+    station: "Posto Exemplo", notes: "", driver_id,
+  });
+  return normalizeDoc({
+    version: 2,
+    vehicles: [
+      { id: v1, name: "Fiorino ESG-01", plate: "ESG1A23", year: 2021, fuel: "Flex", initial_km: 40000, tank_capacity: 55, notes: "Entregas urbanas" },
+      { id: v2, name: "Strada ESG-02", plate: "ESG2B45", year: 2022, fuel: "Diesel", initial_km: 72000, tank_capacity: 60, notes: "Apoio de campo" },
+      { id: v3, name: "Saveiro ESG-03", plate: "ESG3C67", year: 2020, fuel: "Gasolina", initial_km: 15000, tank_capacity: 55, notes: "" },
+    ],
+    drivers: [
+      { id: d1, name: "Carlos Pereira", license: "01234567890", notes: "" },
+      { id: d2, name: "Ana Souza", license: "09876543211", notes: "" },
+    ],
+    refuels: [
+      ab(v1, 55, 40000, 40, 5.79, d1), ab(v1, 35, 40520, 42, 5.85, d1),
+      ab(v1, 15, 41010, 41, 5.90, d1), ab(v1, 3, 41500, 40, 5.95, d1),
+      ab(v2, 50, 72000, 55, 6.10, d2), ab(v2, 28, 72600, 58, 6.15, d2),
+      ab(v2, 10, 73180, 57, 6.20, d2),
+      ab(v2, 2, 73770, 95, 6.25, d2),   // suspeito: 95 L num tanque de 60 L
+      ab(v3, 40, 15000, 38, 5.99, d1), ab(v3, 18, 15430, 40, 6.05, d1),
+      ab(v3, 5, 15880, 39, 6.10, d1),
+    ],
+    maintenances: [
+      { id: uid(), vehicle_id: v1, date: demoISO(60), odometer: 39800, type: "Troca de óleo", details: "Óleo + filtro", cost: 180, shop: "Oficina Exemplo", notes: "", next_km: 10000, next_date: null },
+      { id: uid(), vehicle_id: v2, date: demoISO(45), odometer: 71500, type: "Revisão", details: "Revisão geral", cost: 520, shop: "Oficina Exemplo", notes: "", next_km: null, next_date: demoISO(-20) },
+      { id: uid(), vehicle_id: v3, date: demoISO(30), odometer: 14800, type: "Pneus", details: "Troca dos 4 pneus", cost: 900, shop: "Oficina Exemplo", notes: "", next_km: 40000, next_date: null },
+    ],
+    documents: [
+      { id: uid(), vehicle_id: v1, type: "IPVA", due_date: demoISO(5), cost: 950, notes: "", done: false },      // vencido
+      { id: uid(), vehicle_id: v2, type: "Licenciamento", due_date: demoISO(-20), cost: 180, notes: "", done: false }, // vence em 20 dias
+      { id: uid(), vehicle_id: v3, type: "Seguro", due_date: demoISO(-120), cost: 1800, notes: "", done: false },
+    ],
+  });
+}
+
+function semearDemo() {
+  store = demoDados();
+  activeVehicleId = store.vehicles[0] ? store.vehicles[0].id : null;
+  try { localStorage.setItem(LS_DEMO_SEED, "1"); } catch (e) { /* ok */ }
+  try { if (activeVehicleId) localStorage.setItem(LS_ACTIVE, activeVehicleId); } catch (e) { /* ok */ }
+  persist();
+}
+
+async function reiniciarDemo() {
+  const ok = await confirmDialog(
+    "Isso apaga o que você mexeu na demonstração e devolve os dados de exemplo.<br><br>Continuar?",
+    "Reiniciar demonstração");
+  if (!ok) return;
+  semearDemo();
+  renderAll();
+  $("trial-root").hidden = true;
+  toast("Demonstração reiniciada com os dados de exemplo.");
+}
+
+function demoEntrar() {
+  // Demo pública: entra direto, sem exigir usuário/senha.
+  logado = true;
+  $("login-root").hidden = true;
+  if (!localStorage.getItem(LS_DEMO_SEED) &&
+      !store.vehicles.length && !store.refuels.length) {
+    semearDemo();
+    renderAll();
+  }
+}
+
+function demoGerenciar() {
   const badge = $("trial-badge"), painel = $("trial-root");
   if (!modoDemo()) { badge.hidden = true; painel.hidden = true; return; }
-  const seteDias = 7 * 24 * 60 * 60 * 1000;
-  let t = null;
-  try { t = JSON.parse(localStorage.getItem(LS_TRIAL) || "null"); } catch (e) { t = null; }
-  if (!t || typeof t.inicio !== "number" || typeof t.fim !== "number") {
-    t = { inicio: Date.now(), fim: Date.now() + seteDias };
-    try { localStorage.setItem(LS_TRIAL, JSON.stringify(t)); } catch (e) { /* ok */ }
-  }
-  const restam = t.fim - Date.now();
-  if (restam <= 0) {           // dia 8: bloqueia a tela até ele escolher uma saída
-    badge.hidden = true;
-    painel.hidden = false;
-    return;
-  }
-  const dias = Math.ceil(restam / (24 * 60 * 60 * 1000));
-  badge.textContent = dias === 1 ? "Teste grátis: 1 dia restante"
-                                 : "Teste grátis: " + dias + " dias restantes";
+  badge.textContent = "Demonstração";
   badge.hidden = false;
-  painel.hidden = true;
+  painel.hidden = true;   // nunca bloqueia: o painel só abre se a pessoa clicar no selo
 }
+$("trial-badge").addEventListener("click", () => {
+  const p = $("trial-root");
+  p.hidden = !p.hidden;
+});
 $("trial-exportar").addEventListener("click", downloadData);
+$("trial-reiniciar").addEventListener("click", reiniciarDemo);
+$("trial-fechar").addEventListener("click", () => { $("trial-root").hidden = true; });
 
 /* ---------------------- inicialização ---------------------- */
 function renderAll() {
@@ -3575,9 +3655,12 @@ function init() {
   });
 }
 init();
-mostrarLogin();
-trialGerenciar();
-setInterval(trialGerenciar, 60 * 60 * 1000);   // bloqueia no dia 8 sem recarregar
+if (modoDemo()) {
+  demoEntrar();        // demo pública: entra sem login e semeia os dados de exemplo
+} else {
+  mostrarLogin();      // produto normal: exige usuário/senha deste aparelho
+}
+demoGerenciar();
 </script>
 </body>
 </html>

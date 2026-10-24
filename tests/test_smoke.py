@@ -1252,9 +1252,10 @@ def test_web_e_bat():
     check(html.count("<script") == html.count("</script>"), "<script> balanceado")
     check(html.count("<div") == html.count("</div>"), "<div> balanceado")
 
-    # demonstração online: trial de 7 dias (só no host publicado) e CTA
-    for marca in ('id="trial-root"', 'id="trial-badge"', "const LS_TRIAL",
-                  "function trialGerenciar", '"opusvix.github.io"',
+    # modo demonstração (só no host publicado): demo aberta, dados de exemplo e CTA
+    for marca in ('id="trial-root"', 'id="trial-badge"', "const LS_DEMO_SEED",
+                  "function demoGerenciar", "function semearDemo", "function demoEntrar",
+                  "Reiniciar demonstração", '"opusvix.github.io"',
                   "mailto:esgprojetos26@gmail.com", "DEMO_HOSTS"):
         check(marca in html, f"página tem {marca}")
 
