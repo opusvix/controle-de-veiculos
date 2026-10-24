@@ -379,6 +379,8 @@ code.kbd{
   pointer-events:auto; cursor:pointer
 }
 .trial-badge[hidden]{display:none}
+.nuvem-status{font-size:.74rem;color:var(--primary);font-weight:600}
+.nuvem-status:empty{display:none}
 .trial-root{
   position:fixed; inset:0; z-index:100; background:var(--bg);
   display:flex; align-items:center; justify-content:center; padding:16px; overflow:auto
@@ -525,9 +527,31 @@ code.kbd{
       <input id="login-confirma" type="password" autocomplete="new-password"></label>
     <p class="login-erro" id="login-erro" role="status"></p>
     <button class="btn primary" type="submit" id="login-btn" style="width:100%">Entrar</button>
+    <button class="btn" type="button" id="login-nuvem" style="width:100%;margin-top:8px">Entrar na nuvem (compartilhar entre aparelhos)</button>
     <div class="login-rodape">
       <button type="button" class="link-btn hidden" id="login-esqueci">Esqueci a senha</button>
       <button type="button" class="link-btn" id="login-manual">Abrir o manual</button>
+    </div>
+  </form>
+</div>
+
+<!-- ==================== ACESSO NA NUVEM (Supabase) ==================== -->
+<div class="login-root" id="nuvem-root" hidden>
+  <form class="login-card" id="nuvem-form" autocomplete="off">
+    <h2>Controle de Veículos na nuvem</h2>
+    <p class="brand-by">por ESG Serviços Técnicos</p>
+    <p class="sub" id="nuvem-sub">Entre com e-mail e senha para compartilhar os dados da frota entre aparelhos e motoristas.</p>
+    <label class="field"><span>E-mail</span>
+      <input id="nuvem-email" type="email" autocapitalize="none" autocorrect="off" spellcheck="false" autocomplete="username"></label>
+    <label class="field"><span>Senha</span>
+      <input id="nuvem-senha" type="password" autocomplete="current-password"></label>
+    <label class="field hidden" id="nuvem-campo-empresa"><span>Nome da empresa / frota</span>
+      <input id="nuvem-empresa" autocapitalize="words"></label>
+    <p class="login-erro" id="nuvem-erro" role="status"></p>
+    <button class="btn primary" type="submit" id="nuvem-btn" style="width:100%">Entrar</button>
+    <button class="btn" type="button" id="nuvem-alternar" style="width:100%;margin-top:8px">Criar uma conta nova</button>
+    <div class="login-rodape">
+      <button type="button" class="link-btn" id="nuvem-voltar">Voltar ao acesso deste aparelho</button>
     </div>
   </form>
 </div>
@@ -541,9 +565,11 @@ code.kbd{
       <span class="brand-by">ESG Serviços Técnicos</span>
       <h1>Controle de Veículos</h1>
       <span id="save-status">carregando…</span>
+      <span id="nuvem-status" class="nuvem-status"></span>
     </div>
   </div>
   <div class="topbar-actions">
+    <button class="btn small ghost" id="btn-nuvem-sair" type="button" hidden>Sair da nuvem</button>
     <label class="veh-pick">
       <span>Veículo</span>
       <select id="vehicle-select" aria-label="Veículo ativo"></select>
@@ -1014,6 +1040,15 @@ function persist() {
     toast("Não foi possível gravar no navegador: " + e.message, true);
   }
   if (fsHandle) scheduleFileWrite();
+  if (typeof contaId !== "undefined" && contaId) agendarEnvioNuvem();
+}
+
+// Grava só no navegador (cache), sem empurrar para a nuvem nem para arquivo.
+// Usado ao PUXAR dados da nuvem, para não devolvê-los num laço.
+function persistLocalSo() {
+  try { localStorage.setItem(LS_DATA, JSON.stringify(store)); } catch (e) { /* ok */ }
+  lastSaved = new Date();
+  updateSaveStatus();
 }
 
 function loadLocal() {
@@ -3508,7 +3543,9 @@ $("login-esqueci").addEventListener("click", esqueciSenha);
 const DEMO_HOSTS = ["opusvix.github.io", "netlify.app"];
 function modoDemo() {
   try {
-    if (new URLSearchParams(location.search).has("demo")) return true;
+    const q = new URLSearchParams(location.search);
+    if (q.has("app")) return false;   // ?app=1 força o modo produto (login + nuvem) para testar
+    if (q.has("demo")) return true;
     if (location.protocol !== "http:" && location.protocol !== "https:") return false;
     return DEMO_HOSTS.some(h => location.hostname === h ||
                                 location.hostname.endsWith("." + h));
@@ -3610,6 +3647,203 @@ $("trial-exportar").addEventListener("click", downloadData);
 $("trial-reiniciar").addEventListener("click", reiniciarDemo);
 $("trial-fechar").addEventListener("click", () => { $("trial-root").hidden = true; });
 
+/* ======================= nuvem (Supabase) =======================
+   Opcional e isolada: a biblioteca do Supabase só é carregada quando a
+   pessoa escolhe "Entrar na nuvem". No uso offline/instalado e na demo nada
+   disto roda, então o app normal nunca depende de internet.
+   A anon/publishable key é pública de propósito (pode ir no código); o
+   isolamento por empresa é garantido pela RLS no banco. */
+const SUPABASE_URL  = "https://tdqwgxmhhnvomydislsq.supabase.co";
+const SUPABASE_ANON = "sb_publishable_y8oVK9Jdz1H013kRa9_7VQ_AKtES04s";
+const SUPABASE_LIB  = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/+esm";
+const LS_NUVEM_ATIVA = "controlekm.nuvemAtiva";
+const NUVEM_TABELAS = {
+  veiculos: "vehicles", motoristas: "drivers", abastecimentos: "refuels",
+  manutencoes: "maintenances", documentos: "documents",
+};
+let sb = null, contaId = null, nuvemUser = null, tmrNuvem = null;
+
+async function sbClient() {
+  if (sb) return sb;
+  const mod = await import(SUPABASE_LIB);
+  sb = mod.createClient(SUPABASE_URL, SUPABASE_ANON, {
+    auth: { persistSession: true, autoRefreshToken: true, storageKey: "controlekm.sb" },
+  });
+  return sb;
+}
+
+async function nuvemCarregarConta() {
+  const c = await sbClient();
+  const { data, error } = await c.from("usuarios").select("conta_id").maybeSingle();
+  if (error) throw error;
+  contaId = data ? data.conta_id : null;
+  return contaId;
+}
+
+// Baixa os dados da conta e substitui o store local (RLS já filtra por conta).
+async function nuvemPuxar() {
+  const c = await sbClient();
+  const out = { version: 2, vehicles: [], drivers: [], refuels: [], maintenances: [], documents: [] };
+  for (const [tabela, chave] of Object.entries(NUVEM_TABELAS)) {
+    const { data, error } = await c.from(tabela).select("*");
+    if (error) throw error;
+    out[chave] = data || [];
+  }
+  store = normalizeDoc(out);   // normalizeDoc descarta conta_id/atualizado_em
+  persistLocalSo();
+}
+
+// Envia o store para a nuvem: upsert do que existe + apaga o que foi removido.
+async function nuvemEnviar() {
+  if (!contaId) return;
+  const c = await sbClient();
+  const agora = new Date().toISOString();
+  for (const [tabela, chave] of Object.entries(NUVEM_TABELAS)) {
+    const itens = store[chave] || [];
+    const linhas = itens.map((x) => ({ ...x, conta_id: contaId, atualizado_em: agora }));
+    if (linhas.length) {
+      const { error } = await c.from(tabela).upsert(linhas, { onConflict: "id" });
+      if (error) throw error;
+    }
+    const ids = itens.map((x) => x.id).filter(Boolean);
+    let q = c.from(tabela).delete().eq("conta_id", contaId);
+    if (ids.length) q = q.not("id", "in", "(" + ids.join(",") + ")");
+    const { error: e2 } = await q;
+    if (e2) throw e2;
+  }
+}
+
+function agendarEnvioNuvem() {
+  if (!contaId) return;
+  clearTimeout(tmrNuvem);
+  tmrNuvem = setTimeout(() => {
+    nuvemEnviar().then(() => nuvemStatus("Sincronizado com a nuvem"))
+                 .catch((e) => toast("Nuvem: " + (e.message || e), true));
+  }, 1200);
+}
+
+function nuvemStatus(msg) {
+  const el = $("nuvem-status");
+  if (el) el.textContent = msg || "";
+}
+
+async function nuvemConcluirLogin(primeiraVez) {
+  await nuvemCarregarConta();
+  if (!contaId) throw new Error("Conta ainda não provisionada. Tente de novo em instantes.");
+  if (primeiraVez && (store.vehicles.length || store.refuels.length)) {
+    // Acabou de criar a conta e já tinha dados locais: sobe os dados locais.
+    await nuvemEnviar();
+  } else {
+    await nuvemPuxar();
+  }
+  try { localStorage.setItem(LS_NUVEM_ATIVA, "1"); } catch (e) { /* ok */ }
+  const u = nuvemUser && nuvemUser.email ? nuvemUser.email : "";
+  nuvemStatus("Conectado" + (u ? " · " + u : ""));
+  logado = true;
+  $("login-root").hidden = true;
+  $("nuvem-root").hidden = true;
+  const sair = $("btn-nuvem-sair"); if (sair) sair.hidden = false;
+  renderAll();
+}
+
+async function nuvemEntrar(email, senha) {
+  const c = await sbClient();
+  const { data, error } = await c.auth.signInWithPassword({ email, password: senha });
+  if (error) throw error;
+  nuvemUser = data.user;
+  await nuvemConcluirLogin(false);
+}
+
+async function nuvemCriar(email, senha, empresa) {
+  const c = await sbClient();
+  const { data, error } = await c.auth.signUp({
+    email, password: senha, options: { data: { empresa: empresa || "" } },
+  });
+  if (error) throw error;
+  if (!data.session) {   // projeto exige confirmação de e-mail
+    throw new Error("Conta criada. Confirme o e-mail recebido e depois entre na nuvem.");
+  }
+  nuvemUser = data.user;
+  await nuvemConcluirLogin(true);
+}
+
+async function nuvemSair() {
+  try { const c = await sbClient(); await c.auth.signOut(); } catch (e) { /* ok */ }
+  contaId = null; nuvemUser = null;
+  try { localStorage.removeItem(LS_NUVEM_ATIVA); } catch (e) { /* ok */ }
+  const sair = $("btn-nuvem-sair"); if (sair) sair.hidden = true;
+  nuvemStatus("");
+  logado = false;
+  mostrarLogin();
+}
+
+// Na abertura: se a pessoa já usava a nuvem, retoma a sessão sem pedir login.
+async function nuvemRetomar() {
+  if (!localStorage.getItem(LS_NUVEM_ATIVA)) return false;
+  try {
+    const c = await sbClient();
+    const { data } = await c.auth.getSession();
+    if (!data || !data.session) return false;
+    nuvemUser = data.session.user;
+    await nuvemConcluirLogin(false);
+    return true;
+  } catch (e) {
+    nuvemStatus("");
+    return false;
+  }
+}
+
+let nuvemModo = "entrar";
+function nuvemAplicarModo() {
+  const criar = nuvemModo === "criar";
+  $("nuvem-campo-empresa").classList.toggle("hidden", !criar);
+  $("nuvem-btn").textContent = criar ? "Criar conta e entrar" : "Entrar";
+  $("nuvem-alternar").textContent = criar ? "Já tenho conta" : "Criar uma conta nova";
+  $("nuvem-sub").textContent = criar
+    ? "Crie a conta da empresa. Os motoristas depois entram com e-mail e senha."
+    : "Entre com e-mail e senha para compartilhar os dados entre aparelhos e motoristas.";
+}
+function nuvemErro(msg) { const el = $("nuvem-erro"); if (el) el.textContent = msg || ""; }
+function nuvemOcupar(on) {
+  ["nuvem-email", "nuvem-senha", "nuvem-empresa", "nuvem-btn", "nuvem-alternar", "nuvem-voltar"]
+    .forEach((id) => { const e = $(id); if (e) e.disabled = !!on; });
+}
+function nuvemAbrir() {
+  nuvemModo = "entrar"; nuvemAplicarModo();
+  $("nuvem-email").value = ""; $("nuvem-senha").value = ""; $("nuvem-empresa").value = "";
+  nuvemErro("");
+  $("login-root").hidden = true;
+  $("nuvem-root").hidden = false;
+  setTimeout(() => $("nuvem-email").focus(), 80);
+}
+async function nuvemSubmeter(ev) {
+  if (ev) ev.preventDefault();
+  const email = $("nuvem-email").value.trim();
+  const senha = $("nuvem-senha").value;
+  nuvemErro("");
+  if (!email) { nuvemErro("Digite o e-mail."); $("nuvem-email").focus(); return; }
+  if (senha.length < 6) { nuvemErro("A senha precisa ter pelo menos 6 caracteres."); $("nuvem-senha").focus(); return; }
+  nuvemOcupar(true);
+  const antes = $("nuvem-btn").textContent;
+  $("nuvem-btn").textContent = "Conectando…";
+  try {
+    if (nuvemModo === "criar") await nuvemCriar(email, senha, $("nuvem-empresa").value.trim());
+    else await nuvemEntrar(email, senha);
+  } catch (e) {
+    nuvemOcupar(false); $("nuvem-btn").textContent = antes;
+    nuvemErro(e.message || String(e));
+    return;
+  }
+  nuvemOcupar(false); $("nuvem-btn").textContent = antes;
+}
+$("login-nuvem").addEventListener("click", nuvemAbrir);
+$("nuvem-form").addEventListener("submit", nuvemSubmeter);
+$("nuvem-alternar").addEventListener("click", () => {
+  nuvemModo = nuvemModo === "criar" ? "entrar" : "criar"; nuvemAplicarModo(); nuvemErro("");
+});
+$("nuvem-voltar").addEventListener("click", () => { $("nuvem-root").hidden = true; mostrarLogin(); });
+$("btn-nuvem-sair").addEventListener("click", nuvemSair);
+
 /* ---------------------- inicialização ---------------------- */
 function renderAll() {
   renderVehicleSelect();
@@ -3658,7 +3892,8 @@ init();
 if (modoDemo()) {
   demoEntrar();        // demo pública: entra sem login e semeia os dados de exemplo
 } else {
-  mostrarLogin();      // produto normal: exige usuário/senha deste aparelho
+  // Se a pessoa já usava a nuvem, retoma a sessão; senão, login deste aparelho.
+  nuvemRetomar().then((ok) => { if (!ok) mostrarLogin(); }).catch(() => mostrarLogin());
 }
 demoGerenciar();
 </script>
