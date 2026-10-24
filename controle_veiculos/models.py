@@ -6,6 +6,17 @@ from dataclasses import dataclass, field
 
 FUELS = ["Gasolina", "Etanol", "Flex", "Diesel", "GNV", "Elétrico", "Híbrido", "Outro"]
 
+# Tipos de documento/vencimento sugeridos (aceita texto livre).
+DOC_TYPES = [
+    "IPVA",
+    "Licenciamento",
+    "Seguro",
+    "CNH do motorista",
+    "Multa",
+    "Vistoria",
+    "Outro",
+]
+
 # Tipos de serviço sugeridos no formulário de manutenções (aceita texto livre).
 MAINT_TYPES = [
     "Troca de óleo",
@@ -61,6 +72,7 @@ class Vehicle:
     year: int | None = None
     fuel: str = "Gasolina"
     initial_km: float = 0.0
+    tank_capacity: float = 0.0
     notes: str = ""
 
     def to_dict(self) -> dict:
@@ -71,6 +83,7 @@ class Vehicle:
             "year": self.year,
             "fuel": self.fuel,
             "initial_km": self.initial_km,
+            "tank_capacity": self.tank_capacity,
             "notes": self.notes,
         }
 
@@ -83,6 +96,7 @@ class Vehicle:
             year=_i(d.get("year")),
             fuel=_s(d.get("fuel")) or "Gasolina",
             initial_km=_f(d.get("initial_km")),
+            tank_capacity=_f(d.get("tank_capacity")),
             notes=_s(d.get("notes")),
         )
 
@@ -99,6 +113,7 @@ class Refuel:
     full_tank: bool = False
     station: str = ""
     notes: str = ""
+    driver_id: str = ""
 
     @property
     def total_computed(self) -> float:
@@ -116,6 +131,7 @@ class Refuel:
             "full_tank": bool(self.full_tank),
             "station": self.station,
             "notes": self.notes,
+            "driver_id": self.driver_id,
         }
 
     @classmethod
@@ -134,6 +150,7 @@ class Refuel:
             full_tank=bool(d.get("full_tank")),
             station=_s(d.get("station")),
             notes=_s(d.get("notes")),
+            driver_id=_s(d.get("driver_id")),
         )
 
 
@@ -201,6 +218,10 @@ class Document:
     vehicles: list[Vehicle] = field(default_factory=list)
     refuels: list[Refuel] = field(default_factory=list)
     maintenances: list[Maintenance] = field(default_factory=list)
+    # Documentos/vencimentos: geridos pela versão web; aqui são preservados no
+    # arquivo (round-trip), para não se perderem ao trocar de aparelho.
+    documents: list[dict] = field(default_factory=list)
+    drivers: list[dict] = field(default_factory=list)
 
     def to_dict(self) -> dict:
         return {
@@ -208,6 +229,8 @@ class Document:
             "vehicles": [v.to_dict() for v in self.vehicles],
             "refuels": [r.to_dict() for r in self.refuels],
             "maintenances": [m.to_dict() for m in self.maintenances],
+            "documents": self.documents,
+            "drivers": self.drivers,
         }
 
     @classmethod
@@ -243,6 +266,12 @@ class Document:
                 maintenance.id = new_id()
             seen_maint.add(maintenance.id)
             doc.maintenances.append(maintenance)
+        docs = d.get("documents")
+        if isinstance(docs, list):
+            doc.documents = [x for x in docs if isinstance(x, dict)]
+        drvs = d.get("drivers")
+        if isinstance(drvs, list):
+            doc.drivers = [x for x in drvs if isinstance(x, dict)]
         return doc
 
     def get_vehicle(self, vehicle_id: str | None) -> Vehicle | None:

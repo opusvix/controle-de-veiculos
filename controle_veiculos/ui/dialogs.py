@@ -5,7 +5,7 @@ import tkinter as tk
 from tkinter import messagebox, ttk
 
 from .. import format as fmt
-from ..models import FUELS, MAINT_TYPES, Maintenance, Refuel, Vehicle, new_id
+from ..models import DOC_TYPES, FUELS, MAINT_TYPES, Maintenance, Refuel, Vehicle, new_id
 
 
 def _center(window: tk.Misc, parent: tk.Misc) -> None:
@@ -94,6 +94,17 @@ def refuel_dialog(parent, doc, vehicle_id, refuel: Refuel | None = None) -> Refu
     e_price = _add_entry(body, 1, 1, "Preço por litro (R$)", width=14)
     e_total = _add_entry(body, 2, 0, "Total (R$)", width=14)
     e_station = _add_entry(body, 2, 1, "Posto", width=18)
+
+    drivers = [d for d in doc.drivers if isinstance(d, dict) and d.get("name")]
+    driver_names = ["—"] + [d["name"] for d in drivers]
+    ttk.Label(body, text="Motorista").grid(row=3, column=1, sticky="w", padx=(0, 18), pady=(8, 2))
+    cmb_driver = ttk.Combobox(body, values=driver_names, state="readonly", width=18)
+    cmb_driver.grid(row=4, column=1, sticky="we", padx=(0, 18), pady=(0, 2))
+    cmb_driver.set("—")
+    if editing and getattr(refuel, "driver_id", ""):  # type: ignore[union-attr]
+        atual = next((d["name"] for d in drivers if d.get("id") == refuel.driver_id), None)  # type: ignore[union-attr]
+        if atual:
+            cmb_driver.set(atual)
 
     chk_full = tk.BooleanVar(value=True if not editing else refuel.full_tank)  # type: ignore[union-attr]
     ttk.Checkbutton(body, text="Tanque cheio", variable=chk_full).grid(
@@ -203,6 +214,7 @@ def refuel_dialog(parent, doc, vehicle_id, refuel: Refuel | None = None) -> Refu
             full_tank=bool(chk_full.get()),
             station=e_station.get().strip(),
             notes=e_notes.get().strip(),
+            driver_id=next((d["id"] for d in drivers if d.get("name") == cmb_driver.get()), ""),
         )
         dlg.accept(record)
 
@@ -366,6 +378,7 @@ def vehicle_dialog(parent, vehicle: Vehicle | None = None) -> Vehicle | None:
     cmb_fuel.grid(row=3, column=1, sticky="we", padx=(0, 18), pady=(0, 2))
 
     e_km = _add_entry(body, 2, 0, "Km inicial (odômetro)", width=14)
+    e_tank = _add_entry(body, 3, 0, "Capacidade do tanque (L)", width=14)
 
     ttk.Label(body, text="Observações").grid(row=4, column=0, columnspan=2, sticky="w",
                                              pady=(6, 2))
@@ -378,6 +391,8 @@ def vehicle_dialog(parent, vehicle: Vehicle | None = None) -> Vehicle | None:
         if vehicle.year:  # type: ignore[union-attr]
             e_year.insert(0, str(vehicle.year))  # type: ignore[union-attr]
         e_km.insert(0, fmt.fmt_number(vehicle.initial_km, 1))  # type: ignore[union-attr]
+        if getattr(vehicle, "tank_capacity", 0):  # type: ignore[union-attr]
+            e_tank.insert(0, fmt.fmt_number(vehicle.tank_capacity, 0))  # type: ignore[union-attr]
         e_notes.insert("1.0", vehicle.notes)  # type: ignore[union-attr]
         cmb_fuel.set(vehicle.fuel if vehicle.fuel in FUELS else FUELS[0])  # type: ignore[union-attr]
     else:
@@ -413,6 +428,7 @@ def vehicle_dialog(parent, vehicle: Vehicle | None = None) -> Vehicle | None:
             year=year,
             fuel=cmb_fuel.get() or "Gasolina",
             initial_km=round(initial_km, 1),
+            tank_capacity=round(abs(fmt.parse_number(e_tank.get()) or 0.0), 0),
             notes=e_notes.get("1.0", "end").strip(),
         )
         dlg.accept(record)
@@ -424,8 +440,140 @@ def vehicle_dialog(parent, vehicle: Vehicle | None = None) -> Vehicle | None:
     )
     ttk.Button(buttons, text="Cancelar", command=dlg.cancel).pack(side="left")
 
-    for entry in (e_name, e_plate, e_year, e_km):
+    for entry in (e_name, e_plate, e_year, e_km, e_tank):
         entry.bind("<Return>", lambda _e: save())
     dlg.bind("<Escape>", lambda _e: dlg.cancel())
 
+    return dlg.open()
+
+
+def document_dialog(parent, doc, document: dict | None = None) -> dict | None:
+    """Formulário de documento/vencimento. Retorna o dict ou None (cancelado)."""
+    editing = document is not None
+    dlg = _Dialog(parent, "Editar documento" if editing else "Novo documento")
+    body = dlg.body
+    body.columnconfigure(0, weight=1)
+    body.columnconfigure(1, weight=1)
+
+    ttk.Label(body, text="Veículo *").grid(row=0, column=0, sticky="w", padx=(0, 18), pady=(6, 2))
+    veic = [v for v in doc.vehicles]
+    nomes = [v.name or v.plate or "(sem nome)" for v in veic]
+    cmb_veic = ttk.Combobox(body, values=nomes, state="readonly", width=24)
+    cmb_veic.grid(row=1, column=0, sticky="we", padx=(0, 18), pady=(0, 2))
+
+    ttk.Label(body, text="Tipo *").grid(row=0, column=1, sticky="w", padx=(0, 18), pady=(6, 2))
+    cmb_tipo = ttk.Combobox(body, values=DOC_TYPES, width=18)
+    cmb_tipo.grid(row=1, column=1, sticky="we", padx=(0, 18), pady=(0, 2))
+
+    e_date = _add_entry(body, 2, 0, "Vence em (AAAA-MM-DD) *", width=16)
+    e_cost = _add_entry(body, 2, 1, "Valor (R$)", width=14)
+
+    ttk.Label(body, text="Observações").grid(row=4, column=0, columnspan=2, sticky="w", pady=(6, 2))
+    e_notes = ttk.Entry(body, width=46)
+    e_notes.grid(row=5, column=0, columnspan=2, sticky="we", pady=(0, 4))
+
+    if editing and veic:
+        atual = doc.get_vehicle(document.get("vehicle_id"))  # type: ignore[union-attr]
+        if atual:
+            cmb_veic.set(atual.name or atual.plate or "(sem nome)")
+        cmb_tipo.set(document.get("type", ""))  # type: ignore[union-attr]
+        e_date.insert(0, document.get("due_date") or "")  # type: ignore[union-attr]
+        if document.get("cost"):  # type: ignore[union-attr]
+            e_cost.insert(0, fmt.fmt_number(document.get("cost"), 2))  # type: ignore[union-attr]
+        e_notes.insert(0, document.get("notes", ""))  # type: ignore[union-attr]
+    elif veic:
+        cmb_veic.current(0)
+
+    error_var = tk.StringVar(value="")
+    ttk.Label(body, textvariable=error_var, foreground="#dc2626").grid(
+        row=6, column=0, columnspan=2, sticky="w", pady=(2, 2)
+    )
+
+    def save():
+        if not veic:
+            error_var.set("Cadastre um veículo antes de adicionar documentos.")
+            return
+        tipo = cmb_tipo.get().strip()
+        if not tipo:
+            error_var.set("Informe o tipo (ex.: IPVA, Seguro, Licenciamento).")
+            return
+        data = e_date.get().strip()
+        try:
+            __import__("datetime").date.fromisoformat(data)
+        except ValueError:
+            error_var.set("Data inválida: use o formato AAAA-MM-DD (ex.: 2026-12-31).")
+            e_date.focus_set()
+            return
+        idx = cmb_veic.current()
+        vehicle = veic[idx] if 0 <= idx < len(veic) else veic[0]
+        record = {
+            "id": document.get("id") if editing else new_id(),  # type: ignore[union-attr]
+            "vehicle_id": vehicle.id,
+            "type": tipo,
+            "due_date": data,
+            "cost": round(abs(fmt.parse_number(e_cost.get()) or 0.0), 2),
+            "notes": e_notes.get().strip(),
+            "done": bool(document.get("done")) if editing else False,  # type: ignore[union-attr]
+        }
+        dlg.accept(record)
+
+    buttons = ttk.Frame(body)
+    buttons.grid(row=7, column=0, columnspan=2, sticky="e", pady=(12, 0))
+    ttk.Button(buttons, text="Salvar", style="Accent.TButton", command=save).pack(
+        side="left", padx=(0, 8)
+    )
+    ttk.Button(buttons, text="Cancelar", command=dlg.cancel).pack(side="left")
+    for entry in (e_date, e_cost, e_notes):
+        entry.bind("<Return>", lambda _e: save())
+    dlg.bind("<Escape>", lambda _e: dlg.cancel())
+    return dlg.open()
+
+
+def driver_dialog(parent, driver: dict | None = None) -> dict | None:
+    """Formulário de motorista. Retorna o dict ou None (cancelado)."""
+    editing = driver is not None
+    dlg = _Dialog(parent, "Editar motorista" if editing else "Novo motorista")
+    body = dlg.body
+    body.columnconfigure(0, weight=1)
+    body.columnconfigure(1, weight=1)
+
+    e_name = _add_entry(body, 0, 0, "Nome *", width=24)
+    e_license = _add_entry(body, 0, 1, "CNH", width=16)
+    ttk.Label(body, text="Observações").grid(row=2, column=0, columnspan=2, sticky="w", pady=(6, 2))
+    e_notes = ttk.Entry(body, width=46)
+    e_notes.grid(row=3, column=0, columnspan=2, sticky="we", pady=(0, 4))
+
+    if editing:
+        e_name.insert(0, driver.get("name", ""))  # type: ignore[union-attr]
+        e_license.insert(0, driver.get("license", ""))  # type: ignore[union-attr]
+        e_notes.insert(0, driver.get("notes", ""))  # type: ignore[union-attr]
+
+    error_var = tk.StringVar(value="")
+    ttk.Label(body, textvariable=error_var, foreground="#dc2626").grid(
+        row=4, column=0, columnspan=2, sticky="w", pady=(2, 2)
+    )
+
+    def save():
+        name = e_name.get().strip()
+        if not name:
+            error_var.set("Informe o nome do motorista.")
+            e_name.focus_set()
+            return
+        record = {
+            "id": driver.get("id") if editing else new_id(),  # type: ignore[union-attr]
+            "name": name,
+            "license": e_license.get().strip(),
+            "notes": e_notes.get().strip(),
+        }
+        dlg.accept(record)
+
+    buttons = ttk.Frame(body)
+    buttons.grid(row=5, column=0, columnspan=2, sticky="e", pady=(12, 0))
+    ttk.Button(buttons, text="Salvar", style="Accent.TButton", command=save).pack(
+        side="left", padx=(0, 8)
+    )
+    ttk.Button(buttons, text="Cancelar", command=dlg.cancel).pack(side="left")
+    for entry in (e_name, e_license, e_notes):
+        entry.bind("<Return>", lambda _e: save())
+    dlg.bind("<Escape>", lambda _e: dlg.cancel())
     return dlg.open()

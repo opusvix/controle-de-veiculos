@@ -13,6 +13,7 @@ MODES = (
     "Gasto mensal (R$)",
     "Manutenção por mês (R$)",
     "Km por mês",
+    "CO₂ por mês (kg)",
 )
 
 MONTH_COLUMNS = (
@@ -40,6 +41,7 @@ CARD_SPECS = (
     ("cost_per_km", "Custo por km (combustível)"),
     ("cost_per_km_total", "Custo por km total"),
     ("avg_spent", "Média por abastecimento"),
+    ("co2", "CO₂ estimado"),
 )
 
 
@@ -54,6 +56,7 @@ class ReportsTab(ttk.Frame):
         self._build_cards()
         self._build_chart()
         self._build_months()
+        self._build_drivers()
         self.refresh()
 
     # -------------------------------------------------------------- filtros
@@ -169,6 +172,54 @@ class ReportsTab(ttk.Frame):
         box.rowconfigure(0, weight=1)
         box.columnconfigure(0, weight=1)
 
+    # -------------------------------------------------------------- motoristas
+    def _build_drivers(self):
+        box = ttk.LabelFrame(self, text=" Por motorista ", padding=10)
+        box.pack(fill="both", expand=True, pady=(12, 0))
+        cols = (
+            ("name", "Motorista", 160, "w"),
+            ("count", "Abast.", 70, "e"),
+            ("km", "Km rodados", 105, "e"),
+            ("liters", "Litros", 90, "e"),
+            ("spent", "Combustível", 110, "e"),
+            ("kmpl", "km/L", 80, "e"),
+            ("co2", "CO₂ (kg)", 90, "e"),
+        )
+        self.drv_tree = ttk.Treeview(box, columns=[c[0] for c in cols],
+                                     show="headings", height=5)
+        for key, title, width, anchor in cols:
+            self.drv_tree.heading(key, text=title)
+            self.drv_tree.column(key, width=width, anchor=anchor)
+        vsb = ttk.Scrollbar(box, orient="vertical", command=self.drv_tree.yview)
+        self.drv_tree.configure(yscrollcommand=vsb.set)
+        self.drv_tree.grid(row=0, column=0, sticky="nsew")
+        vsb.grid(row=0, column=1, sticky="ns")
+        self.drv_empty = ttk.Label(box, text="", foreground="#5b6472")
+        self.drv_empty.grid(row=1, column=0, sticky="w", pady=(6, 0))
+        box.rowconfigure(0, weight=1)
+        box.columnconfigure(0, weight=1)
+
+    def _refresh_drivers(self):
+        self.drv_tree.delete(*self.drv_tree.get_children())
+        rows = calcs.driver_report(self.app.doc, self._vehicle_ids(),
+                                   self.start_iso, self.end_iso)
+        if not rows:
+            self.drv_empty.configure(
+                text="Cadastre motoristas na aba Frota e registre quem abasteceu."
+            )
+            return
+        self.drv_empty.configure(text="")
+        for r in rows:
+            self.drv_tree.insert("", "end", values=(
+                r.name,
+                r.count,
+                fmt.fmt_number(r.km, 1),
+                fmt.fmt_number(r.liters, 1),
+                fmt.fmt_brl(r.spent),
+                fmt.fmt_number(r.km_per_l, 2) if r.km_per_l else "-",
+                fmt.fmt_number(r.co2, 0),
+            ))
+
     # -------------------------------------------------------------- refresh
     def _vehicle_ids(self) -> list[str]:
         if self.all_vehicles.get():
@@ -194,6 +245,7 @@ class ReportsTab(ttk.Frame):
             self.tree.delete(*self.tree.get_children())
             self.chart.set_data([], [], "")
             self.chart_note.configure(text="Cadastre um veículo para ver relatórios.")
+            self._refresh_drivers()
             return
 
         data = {
@@ -218,6 +270,7 @@ class ReportsTab(ttk.Frame):
             "cost_per_km_total": (fmt.fmt_brl(stats.cost_per_km_total), "/km",
                                   "tudo ÷ km rodados"),
             "avg_spent": (fmt.fmt_brl(stats.avg_spent), "", "valor por parada"),
+            "co2": (fmt.fmt_number(stats.co2, 0), " kg", "estimado pela queima"),
         }
         for key, (value_text, unit, subtitle) in data.items():
             value_label, sub_label = self.cards[key]
@@ -240,6 +293,7 @@ class ReportsTab(ttk.Frame):
             self.tree.insert("", "end", values=values)
 
         self._current_view = view
+        self._refresh_drivers()
         self._draw_chart()
 
     def _draw_chart(self):
@@ -247,6 +301,16 @@ class ReportsTab(ttk.Frame):
         if view is None:
             return
         mode = self.cmb_mode.get() or MODES[0]
+
+        if mode == "CO₂ por mês (kg)":
+            labels = [row.label for row in view.months]
+            values = [row.co2 for row in view.months]
+            unit = "kg de CO₂ por mês (estimado)"
+            self.chart_note.configure(
+                text="estimado pela queima do combustível" if labels else ""
+            )
+            self.chart.set_data(labels, values, unit)
+            return
 
         if mode in ("Gasto mensal (R$)", "Km por mês", "Manutenção por mês (R$)"):
             labels = [row.label for row in view.months]

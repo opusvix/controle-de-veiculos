@@ -19,6 +19,7 @@ COLUMNS = (
     ("cpk", "R$/km", 85, "e"),
     ("station", "Posto", 140, "w"),
     ("full", "Tanque", 65, "center"),
+    ("flag", "Alerta", 60, "center"),
 )
 
 
@@ -71,6 +72,11 @@ class RefuelsTab(ttk.Frame):
         self.e_notes = ttk.Entry(form)
         self.e_notes.grid(row=3, column=0, columnspan=6, sticky="we", pady=(0, 2))
 
+        ttk.Label(form, text="Motorista").grid(row=2, column=6, columnspan=2, sticky="w",
+                                               pady=(8, 2))
+        self.cmb_driver = ttk.Combobox(form, state="readonly")
+        self.cmb_driver.grid(row=3, column=6, columnspan=2, sticky="we", pady=(0, 2))
+
         self.hint = ttk.Label(form, text="", foreground="#5b6472")
         self.hint.grid(row=4, column=0, columnspan=8, sticky="w", pady=(6, 0))
 
@@ -111,8 +117,11 @@ class RefuelsTab(ttk.Frame):
 
         self.tree.tag_configure("odd", background="#f7f9fc")
         self.tree.tag_configure("approx", foreground="#8a6d1f")
+        self.tree.tag_configure("suspeito", background="#fdeaea")
+        self._flags: dict[str, list[str]] = {}
 
         menu = tk.Menu(self, tearoff=0)
+        menu.add_command(label="Ver alerta", command=self.show_flag)
         menu.add_command(label="Editar registro", command=self.edit_selected)
         menu.add_command(label="Excluir registro", command=self.delete_selected)
         menu.add_separator()
@@ -120,6 +129,7 @@ class RefuelsTab(ttk.Frame):
         self.menu = menu
         self.tree.bind("<Button-3>", self._open_menu)
         self.tree.bind("<Double-1>", lambda _e: self.edit_selected())
+        self.tree.bind("<<TreeviewSelect>>", lambda _e: self._on_select())
         self.tree.bind("<Delete>", lambda _e: self.delete_selected())
 
         foot = ttk.Frame(box)
@@ -213,6 +223,8 @@ class RefuelsTab(ttk.Frame):
             full_tank=bool(self.v_full.get()),
             station=self.e_station.get().strip(),
             notes=self.e_notes.get().strip(),
+            driver_id=next((d["id"] for d in getattr(self, "_drivers", [])
+                            if d.get("name") == self.cmb_driver.get()), ""),
         )
         self.app.doc.refuels.append(record)
         last_km = km
@@ -294,6 +306,26 @@ class RefuelsTab(ttk.Frame):
         self.v_full.set(True)
         self._auto_total = True
 
+    def _on_select(self):
+        ref_id = self._selected_id()
+        reasons = self._flags.get(ref_id) if ref_id else None
+        if reasons:
+            self.hint.configure(text="⚠ " + " · ".join(reasons), foreground="#b91c1c")
+
+    def show_flag(self):
+        ref_id = self._selected_id()
+        reasons = self._flags.get(ref_id) if ref_id else None
+        if not reasons:
+            messagebox.showinfo("Sem alerta",
+                                "Este abastecimento não tem indícios de inconsistência.",
+                                parent=self.app)
+            return
+        messagebox.showwarning(
+            "Abastecimento suspeito",
+            "Pontos que valem conferência:\n\n• " + "\n• ".join(reasons),
+            parent=self.app,
+        )
+
     # -------------------------------------------------------------- refresh
     def refresh(self):
         vehicle = self.app.current_vehicle()
@@ -302,6 +334,11 @@ class RefuelsTab(ttk.Frame):
                     self.e_station, self.e_notes):
             box.configure(state=state)
         self.btn_add.configure(state=state)
+        self._drivers = [d for d in self.app.doc.drivers
+                         if isinstance(d, dict) and d.get("name")]
+        self.cmb_driver.configure(values=["—"] + [d["name"] for d in self._drivers])
+        if not self.cmb_driver.get():
+            self.cmb_driver.set("—")
 
         if vehicle is None:
             self.hint.configure(
@@ -341,6 +378,7 @@ class RefuelsTab(ttk.Frame):
             return
         refs = calcs.ordered_refuels(self.app.doc, vehicle.id)
         segments = calcs.build_segments(refs)
+        self._flags = calcs.refuel_flags(self.app.doc, vehicle.id)
         for index, record in enumerate(reversed(refs)):
             seg = segments.get(record.id)
             distance = f"{fmt.fmt_number(seg.distance, 1)}" if seg and seg.distance else "-"
@@ -360,10 +398,13 @@ class RefuelsTab(ttk.Frame):
                 cpk,
                 record.station,
                 "sim" if record.full_tank else "",
+                "⚠" if record.id in self._flags else "",
             )
             tags = []
             if index % 2:
                 tags.append("odd")
             if kmpl.startswith("~"):
                 tags.append("approx")
+            if record.id in self._flags:
+                tags.append("suspeito")
             self.tree.insert("", "end", iid=record.id, values=values, tags=tags)

@@ -13,8 +13,9 @@ from tkinter import messagebox, ttk
 
 from .. import caminhos, conta
 
-BG = "#eef1f5"
-ACCENT = "#2563eb"
+BG = "#f4f2ef"
+ACCENT = "#f38433"  # laranja ESG Serviços Técnicos
+ON_ACCENT = "#111111"
 ERRO = "#dc2626"
 OK = "#15803d"
 
@@ -45,9 +46,9 @@ class LoginWindow(tk.Tk):
         estilo.configure("TFrame", background=BG)
         estilo.configure("TLabel", background=BG)
         estilo.configure("TButton", padding=(10, 6))
-        estilo.configure("Accent.TButton", background=ACCENT, foreground="white",
+        estilo.configure("Accent.TButton", background=ACCENT, foreground=ON_ACCENT,
                          font=("Segoe UI", 10, "bold"), padding=(12, 8))
-        estilo.map("Accent.TButton", background=[("active", "#1d4ed8")])
+        estilo.map("Accent.TButton", background=[("active", "#d96a1c")])
 
         self._montar()
         self.protocol("WM_DELETE_WINDOW", self._fechar)
@@ -64,6 +65,8 @@ class LoginWindow(tk.Tk):
 
         ttk.Label(raiz, text="Controle de Veículos",
                   font=("Segoe UI", 16, "bold")).pack(anchor="w")
+        ttk.Label(raiz, text="por ESG Serviços Técnicos", foreground="#a34a0c",
+                  font=("Segoe UI", 9, "bold")).pack(anchor="w", pady=(0, 2))
         self.subtitulo = ttk.Label(
             raiz,
             text=("Primeiro acesso: crie um usuário e uma senha para este computador."
@@ -112,13 +115,13 @@ class LoginWindow(tk.Tk):
         rodape.pack(fill="x", pady=(16, 0))
         self.btn_esqueci = tk.Button(
             rodape, text="Esqueci a senha", bd=0, bg=BG, fg=ACCENT, cursor="hand2",
-            activebackground=BG, activeforeground="#1d4ed8",
+            activebackground=BG, activeforeground="#a34a0c",
             font=("Segoe UI", 9), command=self._esqueci_senha)
         if not self._criando:
             self.btn_esqueci.pack(side="left")
         tk.Button(
             rodape, text="Abrir o manual (passo a passo)", bd=0, bg=BG, fg=ACCENT,
-            cursor="hand2", activebackground=BG, activeforeground="#1d4ed8",
+            cursor="hand2", activebackground=BG, activeforeground="#a34a0c",
             font=("Segoe UI", 9), command=self._abrir_manual).pack(side="right")
 
         self.e_usuario.focus_set()

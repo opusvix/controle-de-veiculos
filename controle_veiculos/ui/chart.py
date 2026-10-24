@@ -8,7 +8,7 @@ from tkinter import ttk
 
 from ..format import fmt_number
 
-ACCENT = "#2563eb"
+ACCENT = "#f38433"  # laranja ESG
 GRID = "#eaeef3"
 AXIS_TEXT = "#5b6472"
 EMPTY_TEXT = "#96a0b0"

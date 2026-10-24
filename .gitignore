@@ -1,25 +1,21 @@
-# --------------------------------------------------------------- Python
-__pycache__/
-*.py[cod]
-*.egg-info/
-
-# ------------------------------------------------------ compilados (PyInstaller)
+# Artefatos de build (gerados)
 build/
 dist/
+*.spec
+*.zip
+*.exe
 
-# --------------------------------------------------- dados pessoais (NUNCA subir)
-# a pasta de dados escolhida na 1a abertura + a pasta antiga
-ControleVeiculos/
-ControleKm/
-# cópias de segurança avulsas que você deixar na raiz
-dados.json
-*.bak
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
 
-# --------------------------------------------------------------- temporários
+# Dados locais do usuário
+ControleVeiculos/dados.json
 *.log
-*.tmp
-Controle-de-veiculos.zip
+
+# Sistema
+.DS_Store
 Thumbs.db
-desktop.ini
-.vscode/
-.idea/

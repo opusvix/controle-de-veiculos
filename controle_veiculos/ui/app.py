@@ -10,13 +10,16 @@ from tkinter import filedialog, messagebox, ttk
 
 from .. import __version__, caminhos, importers, storage
 from ..models import Document
+from .fleet_tab import FleetTab
 from .maintenance_tab import MaintenanceTab
 from .refuels_tab import RefuelsTab
 from .reports_tab import ReportsTab
 from .vehicles_tab import VehiclesTab
 
-BG = "#eef1f5"
-ACCENT = "#2563eb"
+BG = "#f4f2ef"
+ACCENT = "#f38433"  # laranja ESG Serviços Técnicos
+ACCENT_ACTIVE = "#d96a1c"
+ON_ACCENT = "#111111"  # texto sobre o laranja (contraste)
 
 FILETYPES = [("Arquivos de dados do Controle de Km", "*.json"), ("Todos os arquivos", "*.*")]
 FILETYPES_IMPORT = [
@@ -40,7 +43,7 @@ class App(tk.Tk):
         self.ask_folder = ask_folder
         self._first_run = ask_folder and storage.primeira_execucao()
 
-        self.title("Controle de Veículos")
+        self.title("Controle de Veículos — ESG Serviços Técnicos")
         self.geometry("1180x790")
         self.minsize(1000, 660)
         self.configure(bg=BG)
@@ -72,21 +75,21 @@ class App(tk.Tk):
         style.configure("TLabelframe.Label", background=BG, font=("Segoe UI", 10, "bold"))
         style.configure("TCheckbutton", background=BG)
         style.configure("TButton", padding=(10, 5))
-        style.configure("Accent.TButton", background=ACCENT, foreground="white",
+        style.configure("Accent.TButton", background=ACCENT, foreground=ON_ACCENT,
                         font=("Segoe UI", 10, "bold"), padding=(12, 6))
         style.map("Accent.TButton",
-                  background=[("active", "#1d4ed8"), ("disabled", "#a9c2f7")],
-                  foreground=[("disabled", "#f2f6ff")])
+                  background=[("active", ACCENT_ACTIVE), ("disabled", "#f3c9a6")],
+                  foreground=[("disabled", "#7a4a1c")])
         style.configure("Danger.TButton", foreground="#dc2626")
         style.map("Danger.TButton", foreground=[("active", "#b91c1c")])
         style.configure("TNotebook", background=BG, padding=4)
         style.configure("TNotebook.Tab", padding=(16, 7), font=("Segoe UI", 10))
         style.map("TNotebook.Tab", background=[("selected", "white")],
-                  foreground=[("selected", ACCENT)])
+                  foreground=[("selected", "#a34a0c")])
         style.configure("Treeview", background="white", fieldbackground="white",
                         foreground="#111827", rowheight=27, font=("Segoe UI", 10))
         style.map("Treeview", background=[("selected", ACCENT)],
-                  foreground=[("selected", "white")])
+                  foreground=[("selected", ON_ACCENT)])
         style.configure("Treeview.Heading", font=("Segoe UI", 9, "bold"),
                         background="#f3f5f8", foreground="#374151")
         style.configure("Vertical.TScrollbar", background="#dfe4ea", troughcolor=BG)
@@ -421,6 +424,8 @@ class App(tk.Tk):
         bar = ttk.Frame(self, padding=(14, 10))
         bar.pack(fill="x")
 
+        ttk.Label(bar, text="ESG", foreground=ON_ACCENT, background=ACCENT,
+                  font=("Segoe UI", 10, "bold"), padding=(7, 2)).pack(side="left", padx=(0, 10))
         ttk.Label(bar, text="Veículo:", font=("Segoe UI", 10, "bold")).pack(side="left")
         self.cmb_vehicle = ttk.Combobox(bar, state="readonly", width=28)
         self.cmb_vehicle.pack(side="left", padx=(6, 10))
@@ -445,6 +450,8 @@ class App(tk.Tk):
         self.maintenance_tab = MaintenanceTab(self.notebook, self)
         self.reports_tab = ReportsTab(self.notebook, self)
         self.vehicles_tab = VehiclesTab(self.notebook, self)
+        self.fleet_tab = FleetTab(self.notebook, self)
+        self.notebook.add(self.fleet_tab, text="  Frota  ")
         self.notebook.add(self.refuels_tab, text="  Abastecimentos  ")
         self.notebook.add(self.maintenance_tab, text="  Manutenções  ")
         self.notebook.add(self.reports_tab, text="  Relatórios  ")
@@ -493,6 +500,8 @@ class App(tk.Tk):
         self.maintenance_tab.refresh()
         self.reports_tab.refresh()
         self.vehicles_tab.refresh()
+        if hasattr(self, "fleet_tab"):
+            self.fleet_tab.refresh()
 
     def _update_status(self):
         if not hasattr(self, "status_path"):
@@ -564,6 +573,7 @@ class App(tk.Tk):
             "Sobre",
             f"Controle de Veículos v{__version__}\n\n"
             "App desktop em Python/Tkinter (abastecimentos e manutenções).\n"
+            "por ESG Serviços Técnicos\n"
             "Seus dados ficam somente neste computador, em arquivo JSON:\n"
             f"{self.storage_path}\n\n"
             f"Python {sys.version.split()[0]}",

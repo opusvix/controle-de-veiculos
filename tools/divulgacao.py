@@ -34,14 +34,14 @@ SAIDA = RAIZ / "divulgacao"
 LINK = "https://controle-de-veiculos.netlify.app/download/Controle-de-veiculos.zip"
 LINK_CURTO = "controle-de-veiculos.netlify.app"
 
-# cores do programa (controle_veiculos/ui/app.py)
-AZUL = "#2563eb"        # ACCENT
-AZUL_MEDIO = "#3b82f6"
-AZUL_FUNDO = "#1d4ed8"
-NOITE = "#1e3a8a"
-TINTA = "#111827"       # texto do app
+# cores da marca ESG Serviços Técnicos (controle_veiculos/ui/app.py)
+AZUL = "#f38433"        # ACCENT (laranja da marca; nome mantido p/ compatibilidade)
+AZUL_MEDIO = "#f59a55"
+AZUL_FUNDO = "#d96a1c"
+NOITE = "#111111"       # preto da marca
+TINTA = "#111111"       # texto escuro
 CINZA = "#5b6472"       # texto suave do app
-NUVEM = "#dbeafe"       # texto claro sobre o azul
+NUVEM = "#fdeee2"       # texto claro sobre o laranja
 BRANCO = "#ffffff"
 
 

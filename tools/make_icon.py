@@ -12,7 +12,7 @@ import struct
 import zlib
 from pathlib import Path
 
-BLUE = (0x25, 0x63, 0xEB, 255)
+BLUE = (0xF3, 0x84, 0x33, 255)  # laranja ESG
 WHITE = (255, 255, 255, 255)
 SS = 4  # supersampling: renderiza 4x e reduz com média (antialias)
 
