@@ -14,7 +14,7 @@ Sai na pasta divulgacao\\:
     capa-reels-1080x1920.png  capa de Reels/TikTok (texto no centro)
 
 O QR e os links apontam para o pacote de download do site oficial
-(https://controle-de-veiculos.netlify.app/download/Controle-de-veiculos.zip):
+(https://opusvix.github.io/controle-de-veiculos/download/Controle-de-veiculos.zip):
 como o nome do arquivo não muda, as artes continuam valendo sem mudar nada.
 
 Os textos (legendas por rede e roteiro de Reels) ficam em
@@ -31,8 +31,8 @@ RAIZ = Path(__file__).resolve().parents[1]
 PASTA_IMG = RAIZ / "imagens"
 SAIDA = RAIZ / "divulgacao"
 
-LINK = "https://controle-de-veiculos.netlify.app/download/Controle-de-veiculos.zip"
-LINK_CURTO = "controle-de-veiculos.netlify.app"
+LINK = "https://opusvix.github.io/controle-de-veiculos/download/Controle-de-veiculos.zip"
+LINK_CURTO = "opusvix.github.io/controle-de-veiculos"
 
 # cores da marca ESG Serviços Técnicos (controle_veiculos/ui/app.py)
 AZUL = "#f38433"        # ACCENT (laranja da marca; nome mantido p/ compatibilidade)

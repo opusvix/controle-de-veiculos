@@ -5,7 +5,7 @@ ficam nesta pasta; os textos abaixo são para copiar e colar.
 
 O link e o QR de todas as artes apontam para o pacote do site oficial:
 
-<https://controle-de-veiculos.netlify.app/download/Controle-de-veiculos.zip>
+<https://opusvix.github.io/controle-de-veiculos/download/Controle-de-veiculos.zip>
 
 Quando sair uma versão nova do programa, **nada precisa ser mudado** nas artes.
 
@@ -50,7 +50,7 @@ nenhuma biblioteca fora da biblioteca padrão.
 > usuário e senha. Seus dados são seus.
 >
 > É gratuito e de código aberto. Dá para instalar em 2 minutos:
-> <https://controle-de-veiculos.netlify.app/download/Controle-de-veiculos.zip>
+> <https://opusvix.github.io/controle-de-veiculos/download/Controle-de-veiculos.zip>
 >
 > Se você também perde a noção de quanto o carro "come", testa e me conta o
 > que achou — feedback é bem-vindo. 🚗
@@ -74,7 +74,7 @@ nenhuma biblioteca fora da biblioteca padrão.
 > internet — com senha para ninguém abrir no seu lugar.
 >
 > Baixar é de graça (Windows 10/11):
-> <https://controle-de-veiculos.netlify.app/download/Controle-de-veiculos.zip>
+> <https://opusvix.github.io/controle-de-veiculos/download/Controle-de-veiculos.zip>
 >
 > É só baixar o zip, extrair tudo e dar dois cliques em `Instalar.bat` — o
 > passo a passo com fotos vem junto. Manda para aquele amigo que diz que
@@ -104,7 +104,7 @@ Publique junto com `post-feed-1080x1080.png`.
 > Programa novo aqui em casa: **Controle de Veículos** — anota abastecimento,
 > mostra o consumo do carro, avisa quando chega a hora da manutenção e ainda
 > funciona offline (dados ficam no PC, sem nuvem). Gratuito:
-> <https://controle-de-veiculos.netlify.app/download/Controle-de-veiculos.zip>
+> <https://opusvix.github.io/controle-de-veiculos/download/Controle-de-veiculos.zip>
 > (baixa o zip, extrai e dá dois cliques em Instalar.bat)
 
 ## Stories (Instagram, Facebook e WhatsApp status)

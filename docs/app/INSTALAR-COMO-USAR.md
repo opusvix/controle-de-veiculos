@@ -32,7 +32,7 @@ Vale para **Windows 10 e 11** (computador) e para **celular** (Android ou iPhone
 
 O programa é gratuito — é só baixar o pacote do site oficial:
 
-1. Baixe o pacote: <https://controle-de-veiculos.netlify.app/download/Controle-de-veiculos.zip>
+1. Baixe o pacote: <https://opusvix.github.io/controle-de-veiculos/download/Controle-de-veiculos.zip>
 2. O **Controle-de-veiculos.zip** é o pacote completo, com tudo dentro.
 3. Abra a pasta **Downloads**, clique com o botão direito em
    **Controle-de-veiculos.zip** e escolha **Extrair tudo**.
@@ -400,7 +400,7 @@ Não. Tudo funciona sem internet; seus dados nunca saem do computador nem do cel
 A sincronização usa a sua rede Wi-Fi de casa, só entre os seus aparelhos.
 
 **De onde baixo o programa (e a versão nova)?**
-Do site oficial: <https://controle-de-veiculos.netlify.app/> (botão **Baixar**).
+Do site oficial: <https://opusvix.github.io/controle-de-veiculos/> (botão **Baixar**).
 Baixe o `Controle-de-veiculos.zip`, extraia tudo e rode o **`Instalar.bat`**: se já
 houver uma versão instalada, ele **remove a antiga antes** (os dados nunca são
 apagados). O mesmo lugar serve para pegar atualizações.

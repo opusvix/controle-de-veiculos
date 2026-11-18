@@ -19,3 +19,6 @@ ControleVeiculos/dados.json
 # Sistema
 .DS_Store
 Thumbs.db
+
+# Exceção: o pacote publicado pelo GitHub Pages precisa ir ao repo
+!docs/download/Controle-de-veiculos.zip

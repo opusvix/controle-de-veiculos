@@ -31,13 +31,13 @@ Baixar pronto (sem compilar)
 ----------------------------
 
 - Pacote completo: baixe o "Controle-de-veiculos.zip" no
-  site oficial (https://controle-de-veiculos.netlify.app/),
+  site oficial (https://opusvix.github.io/controle-de-veiculos/),
   extraia tudo e dê dois cliques em "Instalar.bat" — o passo a passo
   com fotos está no INSTALAR-COMO-USAR.md.
 - Só o programa: o arquivo "Controle-de-Veiculos.exe" na mesma página
   (portátil, Windows 10/11, sem instalar nada).
 
-Os arquivos ficam no site oficial (https://controle-de-veiculos.netlify.app/);
+Os arquivos ficam no site oficial (https://opusvix.github.io/controle-de-veiculos/);
 o endereço é fixo e a versão mais nova fica sempre no mesmo lugar.
 
 Se o Windows avisar que o programa é "desconhecido"
